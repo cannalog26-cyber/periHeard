@@ -284,7 +284,3 @@ export function BriefCard({ brief }: { brief: Brief }) {
     </div>
   );
 }
-      </div>
-    </div>
-  );
-}
