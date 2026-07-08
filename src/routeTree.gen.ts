@@ -10,19 +10,33 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as CommunityRouteImport } from './routes/community'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CommunityIndexRouteImport } from './routes/community.index'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as CommunityPIdRouteImport } from './routes/community.p.$id'
+import { Route as CommunityCSlugRouteImport } from './routes/community.c.$slug'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityIndexRoute = CommunityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CommunityRoute,
 } as any)
 const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
   id: '/api/transcribe',
@@ -34,36 +48,82 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityPIdRoute = CommunityPIdRouteImport.update({
+  id: '/p/$id',
+  path: '/p/$id',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityCSlugRoute = CommunityCSlugRouteImport.update({
+  id: '/c/$slug',
+  path: '/c/$slug',
+  getParentRoute: () => CommunityRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/community': typeof CommunityRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/community/': typeof CommunityIndexRoute
+  '/community/c/$slug': typeof CommunityCSlugRoute
+  '/community/p/$id': typeof CommunityPIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/community': typeof CommunityIndexRoute
+  '/community/c/$slug': typeof CommunityCSlugRoute
+  '/community/p/$id': typeof CommunityPIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/community': typeof CommunityRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/community/': typeof CommunityIndexRoute
+  '/community/c/$slug': typeof CommunityCSlugRoute
+  '/community/p/$id': typeof CommunityPIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/api/chat' | '/api/transcribe'
+  fullPaths:
+    | '/'
+    | '/community'
+    | '/sitemap.xml'
+    | '/api/chat'
+    | '/api/transcribe'
+    | '/community/'
+    | '/community/c/$slug'
+    | '/community/p/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/api/chat' | '/api/transcribe'
-  id: '__root__' | '/' | '/sitemap.xml' | '/api/chat' | '/api/transcribe'
+  to:
+    | '/'
+    | '/sitemap.xml'
+    | '/api/chat'
+    | '/api/transcribe'
+    | '/community'
+    | '/community/c/$slug'
+    | '/community/p/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/community'
+    | '/sitemap.xml'
+    | '/api/chat'
+    | '/api/transcribe'
+    | '/community/'
+    | '/community/c/$slug'
+    | '/community/p/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CommunityRoute: typeof CommunityRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
@@ -78,12 +138,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/community/': {
+      id: '/community/'
+      path: '/'
+      fullPath: '/community/'
+      preLoaderRoute: typeof CommunityIndexRouteImport
+      parentRoute: typeof CommunityRoute
     }
     '/api/transcribe': {
       id: '/api/transcribe'
@@ -99,11 +173,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community/p/$id': {
+      id: '/community/p/$id'
+      path: '/p/$id'
+      fullPath: '/community/p/$id'
+      preLoaderRoute: typeof CommunityPIdRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/c/$slug': {
+      id: '/community/c/$slug'
+      path: '/c/$slug'
+      fullPath: '/community/c/$slug'
+      preLoaderRoute: typeof CommunityCSlugRouteImport
+      parentRoute: typeof CommunityRoute
+    }
   }
 }
 
+interface CommunityRouteChildren {
+  CommunityIndexRoute: typeof CommunityIndexRoute
+  CommunityCSlugRoute: typeof CommunityCSlugRoute
+  CommunityPIdRoute: typeof CommunityPIdRoute
+}
+
+const CommunityRouteChildren: CommunityRouteChildren = {
+  CommunityIndexRoute: CommunityIndexRoute,
+  CommunityCSlugRoute: CommunityCSlugRoute,
+  CommunityPIdRoute: CommunityPIdRoute,
+}
+
+const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
+  CommunityRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CommunityRoute: CommunityRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiChatRoute: ApiChatRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
@@ -111,13 +216,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
