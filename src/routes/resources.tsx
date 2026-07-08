@@ -38,14 +38,50 @@ function Resources() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <a
-              href="https://www.nice.org.uk/guidance/ng23"
+              href="https://balance-app.com"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
             >
-              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">NICE NG23</h2>
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">Balance app</h2>
               <p className="text-[15px] text-muted-foreground leading-relaxed">
-                Menopause: identification and management - the clinical guideline that anchors every brief.
+                Track symptoms, find menopause specialists and access evidence-based information.
+              </p>
+            </a>
+
+            <a
+              href="https://themenopausecharity.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
+            >
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">The Menopause Charity</h2>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Education, support and workplace resources for anyone going through menopause.
+              </p>
+            </a>
+
+            <a
+              href="https://menopausesupport.co.uk/?page_id=17128"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
+            >
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">Menopause Support</h2>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Free advice, peer support and practical help for perimenopause and menopause.
+              </p>
+            </a>
+
+            <a
+              href="https://www.rcog.org.uk/for-the-public/menopause-and-later-life/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
+            >
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">RCOG</h2>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Royal College of Obstetricians and Gynaecologists guidance on menopause and later life.
               </p>
             </a>
 
@@ -58,18 +94,6 @@ function Resources() {
               <h2 className="font-serif text-xl font-semibold text-foreground mb-2">British Menopause Society</h2>
               <p className="text-[15px] text-muted-foreground leading-relaxed">
                 Specialist guidance, patient information and accredited menopause clinics.
-              </p>
-            </a>
-
-            <a
-              href="https://www.menopauseforall.co.uk/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
-            >
-              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">NHS Menopause Support</h2>
-              <p className="text-[15px] text-muted-foreground leading-relaxed">
-                NHS-recognised advice on symptoms, treatment options and lifestyle support.
               </p>
             </a>
 
