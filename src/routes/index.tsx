@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, Sparkles, Stethoscope, UserCircle2, Users } from "lucide-react";
+import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2, Users } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
+import logoAsset from "@/assets/periHeard-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -77,13 +78,13 @@ function Index() {
       <Toaster position="top-center" richColors />
       <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-primary text-primary-foreground grid place-items-center shadow-sm">
-              <Stethoscope className="h-4 w-4" />
-            </div>
-            <div className="leading-tight">
-              <h1 className="font-serif text-lg font-semibold">PeriHeard</h1>
-            </div>
+          <div className="flex items-center">
+            <img
+              src={logoAsset.url}
+              alt="PeriHeard"
+              className="h-9 w-auto"
+            />
+            <h1 className="sr-only">PeriHeard</h1>
           </div>
           <div className="flex items-center gap-1">
             <Link
