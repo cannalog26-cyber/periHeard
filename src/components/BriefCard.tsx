@@ -39,16 +39,16 @@ function Section({
       ? "text-[color:var(--urgent)]"
       : tone === "warning"
         ? "text-[color:var(--warning-foreground)]"
-        : "text-primary";
+        : "text-foreground";
   return (
-    <section className={`rounded-2xl border ${toneClass} p-5`}>
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className={`h-4 w-4 ${iconClass}`} />
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground/80">
+    <section className={`rounded-2xl border ${toneClass} p-6 sm:p-7`}>
+      <div className="flex items-center gap-2.5 mb-4">
+        <Icon className={`h-5 w-5 shrink-0 ${iconClass}`} aria-hidden="true" />
+        <h3 className="text-[15px] font-bold uppercase tracking-[0.08em] text-foreground">
           {title}
         </h3>
       </div>
-      <div className="text-[15px] leading-relaxed text-foreground/90">{children}</div>
+      <div className="text-base leading-[1.6] text-foreground">{children}</div>
     </section>
   );
 }
@@ -111,10 +111,10 @@ function briefToPlainText(b: Brief): string {
 export function BriefCard({ brief }: { brief: Brief }) {
   if (brief.out_of_scope) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <p className="text-[15px] leading-relaxed">{brief.out_of_scope}</p>
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-7">
+        <p className="text-base leading-[1.6] text-foreground">{brief.out_of_scope}</p>
         {brief.disclaimer && (
-          <p className="mt-4 text-xs text-muted-foreground italic">{brief.disclaimer}</p>
+          <p className="mt-4 text-sm text-muted-foreground italic leading-relaxed">{brief.disclaimer}</p>
         )}
       </div>
     );
@@ -122,34 +122,34 @@ export function BriefCard({ brief }: { brief: Brief }) {
 
   if (brief.clarifying_questions?.length) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <h3 className="font-serif text-xl mb-2">A few things would help me build a stronger brief</h3>
-        <ul className="space-y-2 mt-3">
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-7">
+        <h3 className="font-serif text-xl mb-2 text-foreground">A few things would help me build a stronger brief</h3>
+        <ul className="space-y-2.5 mt-3">
           {brief.clarifying_questions.map((q, i) => (
-            <li key={i} className="flex gap-2 text-[15px]">
-              <span className="text-accent">•</span>
+            <li key={i} className="flex gap-2 text-base leading-[1.6] text-foreground">
+              <span className="text-secondary" aria-hidden="true">•</span>
               <span>{q}</span>
             </li>
           ))}
         </ul>
         {brief.disclaimer && (
-          <p className="mt-4 text-xs text-muted-foreground italic">{brief.disclaimer}</p>
+          <p className="mt-4 text-sm text-muted-foreground italic leading-relaxed">{brief.disclaimer}</p>
         )}
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {brief.urgent_banner && (
-        <div className="rounded-2xl border-2 border-[color:var(--urgent)]/40 bg-[color:var(--urgent)]/10 p-5">
+        <div className="rounded-2xl border-2 border-[color:var(--urgent)]/50 bg-[color:var(--urgent)]/10 p-6 sm:p-7">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-[color:var(--urgent)] mt-0.5 shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-[color:var(--urgent)] mt-0.5 shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--urgent)] mb-1">
+              <p className="text-[15px] font-bold uppercase tracking-[0.08em] text-[color:var(--urgent)] mb-2">
                 Please read first
               </p>
-              <p className="text-[15px] font-medium text-foreground leading-relaxed">
+              <p className="text-base font-medium text-foreground leading-[1.6]">
                 {brief.urgent_banner}
               </p>
             </div>
@@ -158,14 +158,14 @@ export function BriefCard({ brief }: { brief: Brief }) {
       )}
 
       {brief.one_line_summary && (
-        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
-          <div className="flex items-start justify-between gap-3 mb-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+        <div className="rounded-2xl border border-border bg-card p-6 sm:p-7">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <p className="text-[15px] font-bold uppercase tracking-[0.08em] text-foreground">
               Open the appointment with this
             </p>
             <CopyButton text={brief.one_line_summary} />
           </div>
-          <p className="font-serif text-lg leading-snug text-foreground">
+          <p className="font-serif text-xl leading-[1.5] text-foreground">
             &ldquo;{brief.one_line_summary}&rdquo;
           </p>
         </div>
@@ -173,12 +173,12 @@ export function BriefCard({ brief }: { brief: Brief }) {
 
       {brief.symptom_summary?.length > 0 && (
         <Section icon={Activity} title="Symptom summary">
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {brief.symptom_summary.map((s, i) => (
-              <li key={i} className="border-l-2 border-accent/40 pl-3">
-                <div className="font-medium text-foreground">{s.cluster}</div>
-                <div className="text-sm text-foreground/80">{s.detail}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{s.duration_pattern}</div>
+              <li key={i} className="border-l-2 border-secondary pl-4">
+                <div className="font-semibold text-foreground text-base leading-[1.6]">{s.cluster}</div>
+                <div className="text-base text-foreground leading-[1.6]">{s.detail}</div>
+                <div className="text-sm text-muted-foreground mt-1 leading-relaxed">{s.duration_pattern}</div>
               </li>
             ))}
           </ul>
@@ -199,10 +199,10 @@ export function BriefCard({ brief }: { brief: Brief }) {
 
       {brief.already_tried?.length > 0 && (
         <Section icon={ListChecks} title="Already tried">
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {brief.already_tried.map((x, i) => (
               <li key={i} className="flex gap-2">
-                <span className="text-accent">•</span>
+                <span className="text-secondary" aria-hidden="true">•</span>
                 <span>{x}</span>
               </li>
             ))}
@@ -212,10 +212,10 @@ export function BriefCard({ brief }: { brief: Brief }) {
 
       {brief.questions_to_ask?.length > 0 && (
         <Section icon={Stethoscope} title="Questions to ask your GP">
-          <ol className="space-y-2">
+          <ol className="space-y-3">
             {brief.questions_to_ask.map((q, i) => (
               <li key={i} className="flex gap-3">
-                <span className="text-accent font-serif font-semibold shrink-0">{i + 1}.</span>
+                <span className="text-secondary font-serif font-semibold shrink-0">{i + 1}.</span>
                 <span>{q}</span>
               </li>
             ))}
@@ -227,8 +227,8 @@ export function BriefCard({ brief }: { brief: Brief }) {
         <Section icon={MessageSquareQuote} title="If you feel dismissed, try">
           <ul className="space-y-3">
             {brief.if_dismissed.map((x, i) => (
-              <li key={i} className="rounded-lg bg-muted/60 p-3 pr-2 flex items-start justify-between gap-2">
-                <span className="italic text-foreground/90">&ldquo;{x}&rdquo;</span>
+              <li key={i} className="rounded-lg bg-background/40 border border-border/60 p-4 pr-2 flex items-start justify-between gap-2">
+                <span className="italic text-foreground">&ldquo;{x}&rdquo;</span>
                 <CopyButton text={x} />
               </li>
             ))}
@@ -238,10 +238,10 @@ export function BriefCard({ brief }: { brief: Brief }) {
 
       {brief.red_flags?.length > 0 && (
         <Section icon={ShieldAlert} title="Red flags — seek prompt review" tone="urgent">
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {brief.red_flags.map((x, i) => (
               <li key={i} className="flex gap-2">
-                <span className="text-[color:var(--urgent)]">•</span>
+                <span className="text-[color:var(--urgent)]" aria-hidden="true">•</span>
                 <span>{x}</span>
               </li>
             ))}
@@ -257,10 +257,10 @@ export function BriefCard({ brief }: { brief: Brief }) {
 
       {brief.bring_with_you?.length > 0 && (
         <Section icon={ListChecks} title="Bring with you">
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {brief.bring_with_you.map((x, i) => (
               <li key={i} className="flex gap-2">
-                <span className="text-accent">•</span>
+                <span className="text-secondary" aria-hidden="true">•</span>
                 <span>{x}</span>
               </li>
             ))}
@@ -268,8 +268,8 @@ export function BriefCard({ brief }: { brief: Brief }) {
         </Section>
       )}
 
-      <div className="flex items-center justify-between gap-4 pt-2">
-        <p className="text-xs text-muted-foreground italic">{brief.disclaimer}</p>
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+        <p className="text-sm text-muted-foreground italic leading-relaxed">{brief.disclaimer}</p>
         <div className="flex items-center gap-1">
           <CopyButton text={briefToPlainText(brief)} />
           <button
