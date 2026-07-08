@@ -86,7 +86,7 @@ function Index() {
               ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
               : "Add more detail, correct something, or ask a follow-up…"
           }
-          rows={4}
+          rows={6}
           className="w-full bg-transparent resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none"
         />
         <div className="flex items-center justify-between gap-3 px-3 pb-3">
@@ -158,10 +158,7 @@ function Index() {
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
               </h2>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Tell your story in your own words. It doesn't need to be perfect—write as much or as
-                little as you like. We'll organise your symptoms, timeline and how they're affecting
-                your daily life into a clear one-page summary based on NICE guidance. We'll also help
-                you prepare what to say if you feel your concerns aren't being heard.
+                1 in 5 women say they've been brushed off. We built periHeard so everyone walks in prepared, and walks out heard.
               </p>
             </section>
             <div className="w-full">
