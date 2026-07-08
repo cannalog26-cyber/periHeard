@@ -68,9 +68,6 @@ export function formatAnswersForBrief(answers: GapAnswers): string {
     } as const;
     lines.push(`Vaginal / urinary symptoms: ${map[answers.genitourinary]}`);
   }
-  if (answers.already_tried?.trim()) {
-    lines.push(`Already tried / previous GP contact: ${answers.already_tried.trim()}`);
-  }
   if (answers.goal && answers.goal.length) {
     lines.push(`What I'd most like from this appointment: ${answers.goal.join("; ")}`);
   }
