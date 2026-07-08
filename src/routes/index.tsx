@@ -54,14 +54,6 @@ function Index() {
         throw new Error(data.error ?? "Something went wrong.");
       }
       append({ role: "assistant", brief: data.brief, id: newId(), createdAt: Date.now() });
-      // Auto-save usable briefs to the dashboard vault
-      if (
-        !data.brief.out_of_scope &&
-        !data.brief.clarifying_questions?.length &&
-        data.brief.one_line_summary
-      ) {
-        addToVault(data.brief);
-      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -93,13 +85,6 @@ function Index() {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5" />
-              Dashboard
-            </Link>
             {turns.length > 0 && (
             <button
               onClick={() => {
