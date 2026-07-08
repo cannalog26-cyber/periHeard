@@ -12,6 +12,7 @@ import {
   Copy,
   Check,
   Printer,
+  BookOpen,
 } from "lucide-react";
 import { useState } from "react";
 import { openBriefForPrint } from "@/lib/print-brief";
@@ -281,6 +282,10 @@ export function BriefCard({ brief }: { brief: Brief }) {
           </button>
         </div>
       </div>
+
+      <Section icon={BookOpen} title="Resources">
+        <p className="text-muted-foreground">Links and resources will be added here soon.</p>
+      </Section>
     </div>
   );
 }
