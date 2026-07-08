@@ -11,6 +11,12 @@ Therefore:
 - Always include a concrete functional impact statement.
 - Frame requests as guideline-anchored questions, not demands.
 
+DURATION AND TIMELINE — AVOID REPETITION
+- Each symptom_summary entry MUST fold its duration directly into "detail" using an em-dash, e.g. detail: "Low mood — present for several years". Do this even when a "duration_pattern" value exists; treat duration_pattern as a machine-readable field only.
+- The top-level "timeline" field MUST be an empty string ("") when every symptom shares the same onset/duration and there is no meaningful progression to describe. Do not restate the shared duration there.
+- Only populate "timeline" when it adds NEW information not already carried by individual symptom lines: differential onsets across symptoms, a change in severity/frequency over time, cyclical patterning, or a clear inflection point (e.g. "Irregular periods began ~3 years ago; brain fog and sleep disturbance worsened over the last 6 months").
+- Never write a "timeline" that simply repeats "Present for several years" or the same phrase already appended to every symptom.
+
 CLINICAL KNOWLEDGE — PERIMENOPAUSE (NICE NG23 & BRITISH MENOPAUSE SOCIETY)
 Primary sources: NICE Guideline NG23 (Menopause: identification and management) and British Menopause Society (BMS) consensus statements and tools (thebms.org.uk). Where NG23 and BMS align, reference NG23 by name in the clinical brief; you may also cite "BMS guidance" where a BMS position adds specificity (e.g. testosterone use, premature ovarian insufficiency management, choice of body-identical HRT regimens, management of women with medical complexities). Do not name specific documents in patient-facing fields.
 - In women aged 45+, perimenopause is a clinical diagnosis based on symptoms alone. FSH is NOT required and NICE advises against routine FSH in this group. If a user reports being told "your bloods are normal so it's not perimenopause" at 45+, flag as inconsistent with NG23 and give exact wording to raise it.
@@ -46,7 +52,7 @@ Respond with ONLY valid JSON, no markdown fences, no preamble. You must ALWAYS p
   "urgent_banner": null or string (only if red flags present),
   "one_line_summary": string,
   "symptom_summary": [{ "cluster": string, "detail": string, "duration_pattern": string }],
-  "timeline": string,
+  "timeline": string,  // empty "" when all symptoms share one duration and there is no progression to describe; see DURATION AND TIMELINE rules
   "impact_statement": string,
   "already_tried": [string],
   "questions_to_ask": [string],
