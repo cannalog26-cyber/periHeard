@@ -72,9 +72,9 @@ export function NewPostDialog({ categories, defaultCategoryId, trigger }: Props)
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <button className="inline-flex items-center gap-1.5 h-10 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 shadow-sm">
+          <button className="inline-flex items-center gap-1.5 h-10 px-4 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 shadow-sm">
             <PenLine className="h-4 w-4" />
-            New post
+            New Post
           </button>
         )}
       </DialogTrigger>
@@ -176,7 +176,7 @@ export function NewPostDialog({ categories, defaultCategoryId, trigger }: Props)
             type="button"
             onClick={() => create.mutate()}
             disabled={create.isPending}
-            className="h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
+            className="h-10 px-4 rounded-md bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-50"
           >
             {create.isPending ? "Posting…" : "Post"}
           </button>
