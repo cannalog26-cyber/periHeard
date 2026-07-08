@@ -39,6 +39,16 @@ function Index() {
     textareaRef.current?.focus();
   }, []);
 
+  // Auto-grow the textarea while keeping a comfortable minimum height.
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 24;
+    const minHeight = Math.round(6.5 * lineHeight);
+    el.style.height = `${Math.max(el.scrollHeight, minHeight)}px`;
+  }, [input, inputOpen]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns.length, loading, gapQuestions]);
