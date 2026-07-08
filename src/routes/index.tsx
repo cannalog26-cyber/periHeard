@@ -131,9 +131,10 @@ function Index() {
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
               </h2>
               <p className="text-[15px] text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Tell it your story in your own words — messy, rambling, whatever. It organises the
-                pattern, chronology, and impact into a one-page brief anchored in NICE guidance,
-                plus exact wording for the moment you feel dismissed.
+                Tell your story in your own words. It doesn't need to be perfect—write as much or as
+                little as you like. We'll organise your symptoms, timeline and how they're affecting
+                your daily life into a clear one-page summary based on NICE guidance. We'll also help
+                you prepare what to say if you feel your concerns aren't being heard.
               </p>
             </section>
           )}
