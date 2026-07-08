@@ -209,8 +209,8 @@ function Index() {
 
       <main className="flex-1 w-full flex flex-col">
         {isEmpty ? (
-          <div className="max-w-3xl mx-auto px-5 py-8 flex-1 flex flex-col items-center gap-4">
-            <section className="text-center space-y-4">
+          <div className="max-w-3xl mx-auto px-5 py-5 flex-1 flex flex-col items-center gap-3">
+            <section className="text-center space-y-2">
               <h2 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-foreground">
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
               </h2>
