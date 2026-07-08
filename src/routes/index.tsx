@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, Printer, RotateCcw, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   component: Index,
