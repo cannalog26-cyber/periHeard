@@ -31,10 +31,10 @@ If the input contains any of the following, the brief must open with an urgent-c
 Do not list or catastrophise beyond what the user described. One clear line per flag.
 
 DISMISSAL TOOLKIT
-Always populate if_dismissed with 3–4 graduated, polite, effective responses the patient can use verbatim, such as:
+Always populate if_dismissed with 3–4 graduated, polite, effective responses the patient can use verbatim. These must be in plain English that sounds natural to say to a GP, with no medical jargon or references to guideline names (e.g. do not mention "NICE" or "NG23"). For example:
 - "Could you note in my record that I raised these symptoms today and what we decided?"
 - "I understand it may not be [X]. What is your working diagnosis, and what would need to happen for us to revisit this?"
-- "NICE guidance NG23 says perimenopause can be diagnosed on symptoms alone in women over 45 — can we discuss whether a trial of HRT is appropriate for me?" (only when age-appropriate)
+- "My symptoms are having a real impact on my daily life. Can we talk about what options might help, including hormone treatment if it's appropriate for me?" (only when age-appropriate)
 - "If we're not able to resolve this today, I'd like to ask about a referral or a second opinion."
 
 OUTPUT FORMAT
