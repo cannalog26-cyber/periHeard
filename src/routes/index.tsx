@@ -97,14 +97,14 @@ function Index() {
               textareaRef.current?.focus();
             }}
           />
-          <button
-            onClick={submit}
-            disabled={!input.trim() || loading}
-            className="inline-flex items-center gap-1.5 h-10 px-5 rounded-full bg-cta text-cta-foreground text-sm font-semibold hover:bg-cta/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
-          >
-            {turns.length === 0 ? "Build my brief" : "Update brief"}
-            <ArrowUp className="h-4 w-4" />
-          </button>
+              <button
+                onClick={submit}
+                disabled={!input.trim() || loading}
+                className="inline-flex items-center gap-1.5 h-10 px-5 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+              >
+                {turns.length === 0 ? "Build My Brief" : "Update Brief"}
+                <ArrowUp className="h-4 w-4" />
+              </button>
         </div>
       </div>
       <p className="text-[11px] text-foreground/75 text-center mt-2">

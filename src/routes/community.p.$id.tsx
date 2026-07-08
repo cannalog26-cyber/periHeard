@@ -184,9 +184,9 @@ function PostPage() {
               <button
                 onClick={() => reply.mutate()}
                 disabled={reply.isPending}
-                className="h-10 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
+                className="h-10 px-4 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-50"
               >
-                {reply.isPending ? "Posting…" : "Post reply"}
+                {reply.isPending ? "Posting…" : "Post Reply"}
               </button>
             </div>
           </div>
