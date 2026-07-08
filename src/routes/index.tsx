@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, RotateCcw, Sparkles, Stethoscope, UserCircle2 } from "lucide-react";
+import { ArrowUp, RotateCcw, Sparkles, Stethoscope, UserCircle2, Users } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
@@ -85,6 +85,13 @@ function Index() {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <Link
+              to="/community"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
+            >
+              <Users className="h-3.5 w-3.5" />
+              Community
+            </Link>
             {turns.length > 0 && (
             <button
               onClick={() => {
