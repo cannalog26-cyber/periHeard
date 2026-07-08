@@ -1,0 +1,1 @@
+INSERT INTO public.forum_categories (slug, name, description, sort_order) VALUES ('other', 'Other', 'Everything else that doesn''t fit the topics above', 7) ON CONFLICT (slug) DO NOTHING;
