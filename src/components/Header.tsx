@@ -17,21 +17,11 @@ export function Header({ actions }: { actions?: ReactNode }) {
     <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-10">
       <div className="max-w-6xl mx-auto px-5 py-4 flex items-center gap-4 whitespace-nowrap">
         <Link to="/" className="flex items-center shrink-0">
-            <span
-              aria-label="PeriHeard"
-              role="img"
-              className="block h-9 w-32 bg-foreground"
-              style={{
-                WebkitMaskImage: `url(${logoAsset.url})`,
-                maskImage: `url(${logoAsset.url})`,
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-                WebkitMaskPosition: "left center",
-                maskPosition: "left center",
-                WebkitMaskSize: "contain",
-                maskSize: "contain",
-              }}
-            />
+          <img
+            src={logoAsset.url}
+            alt="PeriHeard"
+            className="block h-9 w-auto"
+          />
           <h1 className="sr-only">PeriHeard</h1>
         </Link>
         <nav className="hidden lg:flex items-center gap-5 ml-2">
