@@ -132,9 +132,7 @@ function Index() {
   const chatInput = (expanded = false) => (
     <>
       <div
-        className={cn(
-          "rounded-2xl border border-input-card-border shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all overflow-hidden bg-input-card",
-        )}
+        className="rounded-2xl border border-input-card-border shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all overflow-hidden bg-input-card"
       >
         <textarea
           ref={textareaRef}
