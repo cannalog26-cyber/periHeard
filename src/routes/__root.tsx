@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes.",
       },
       { name: "author", content: "Say This To Your GP" },
-      { property: "og:title", content: "Say This To Your GP" },
+      { property: "og:title", content: "Say This To Your GP — Turn symptoms into a 10-minute brief" },
       {
         property: "og:description",
         content:
@@ -92,6 +92,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Say This To Your GP — Turn symptoms into a 10-minute brief" },
+      { name: "description", content: "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes." },
+      { property: "og:description", content: "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes." },
+      { name: "twitter:description", content: "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e391c86e-ac43-4d1a-adcd-4193f4a15da4/id-preview-620aec7d--fad26223-8018-410a-b808-e142a73ba44e.lovable.app-1783505054702.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e391c86e-ac43-4d1a-adcd-4193f4a15da4/id-preview-620aec7d--fad26223-8018-410a-b808-e142a73ba44e.lovable.app-1783505054702.png" },
     ],
     links: [
       {
