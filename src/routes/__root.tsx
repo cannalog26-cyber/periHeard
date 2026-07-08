@@ -77,14 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Say This To Your GP — Turn symptoms into a 10-minute brief" },
+      { title: "PeriHeard — Turn symptoms into a 10-minute brief" },
       {
         name: "description",
         content:
           "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes.",
       },
-      { name: "author", content: "Say This To Your GP" },
-      { property: "og:title", content: "Say This To Your GP — Turn symptoms into a 10-minute brief" },
+      { name: "author", content: "PeriHeard" },
+      { property: "og:title", content: "PeriHeard — Turn symptoms into a 10-minute brief" },
       {
         property: "og:description",
         content:
@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Say This To Your GP — Turn symptoms into a 10-minute brief" },
+      { name: "twitter:title", content: "PeriHeard — Turn symptoms into a 10-minute brief" },
       { name: "description", content: "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes." },
       { property: "og:description", content: "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes." },
       { name: "twitter:description", content: "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes." },

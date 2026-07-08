@@ -34,7 +34,7 @@ import { openBriefForPrint } from "@/lib/print-brief";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Your dashboard — Say This To Your GP" },
+      { title: "Your dashboard — PeriHeard" },
       {
         name: "description",
         content:
