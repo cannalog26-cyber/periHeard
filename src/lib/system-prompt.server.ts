@@ -51,7 +51,7 @@ Respond with ONLY valid JSON, no markdown fences, no preamble. Schema:
   "red_flags": [string],
   "what_to_expect": string,
   "bring_with_you": [string],
-  "disclaimer": "This tool organises your story — it doesn't diagnose. Decisions about your care are made with your clinician."
+  "disclaimer": "This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice."
 }
 
 STYLE
