@@ -1,5 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+async function translateToEnglish(key: string, text: string, sourceLang: string) {
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a medical translator. Translate the user's message into natural, clinical English suitable for a UK GP. Preserve every symptom, timeline, medication, dose, and emotional nuance. Do NOT summarise, add, or diagnose. If the text is already English, return it unchanged. Reply with the translation only — no preamble, no quotes.",
+        },
+        {
+          role: "user",
+          content:
+            sourceLang && sourceLang !== "auto"
+              ? `Source language: ${sourceLang}\n\n${text}`
+              : text,
+        },
+      ],
+    }),
+  });
+  if (!res.ok) return null;
+  const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+  return data.choices?.[0]?.message?.content?.trim() ?? null;
+}
+
 export const Route = createFileRoute("/api/transcribe")({
   server: {
     handlers: {
@@ -14,6 +44,8 @@ export const Route = createFileRoute("/api/transcribe")({
 
         const form = await request.formData();
         const file = form.get("file");
+        const language = String(form.get("language") ?? "auto");
+        const translate = String(form.get("translate") ?? "true") === "true";
         if (!(file instanceof File) || file.size < 1024) {
           return new Response(
             JSON.stringify({ error: "That recording was empty — please try again." }),
@@ -24,6 +56,10 @@ export const Route = createFileRoute("/api/transcribe")({
         const upstream = new FormData();
         upstream.append("model", "openai/gpt-4o-mini-transcribe");
         upstream.append("file", file, file.name || "recording.wav");
+        if (language && language !== "auto") {
+          // ISO-639-1 hint improves accuracy on non-English speech
+          upstream.append("language", language);
+        }
 
         const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
           method: "POST",
@@ -40,9 +76,22 @@ export const Route = createFileRoute("/api/transcribe")({
         }
 
         const data = (await res.json()) as { text?: string };
-        return new Response(JSON.stringify({ text: data.text ?? "" }), {
-          headers: { "Content-Type": "application/json" },
-        });
+        const original = data.text ?? "";
+
+        let translated: string | null = null;
+        if (translate && original && language !== "en") {
+          translated = await translateToEnglish(key, original, language);
+        }
+
+        return new Response(
+          JSON.stringify({
+            text: translated ?? original,
+            original,
+            translated: translated !== null && translated !== original,
+            language,
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        );
       },
     },
   },

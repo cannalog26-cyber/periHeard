@@ -1,5 +1,24 @@
 import { useRef, useState } from "react";
-import { Mic, Square, Loader2 } from "lucide-react";
+import { Mic, Square, Loader2, Languages } from "lucide-react";
+
+const LANGUAGES: Array<{ code: string; label: string }> = [
+  { code: "auto", label: "Auto-detect" },
+  { code: "en", label: "English" },
+  { code: "es", label: "Spanish" },
+  { code: "fr", label: "French" },
+  { code: "de", label: "German" },
+  { code: "it", label: "Italian" },
+  { code: "pt", label: "Portuguese" },
+  { code: "pl", label: "Polish" },
+  { code: "ro", label: "Romanian" },
+  { code: "ur", label: "Urdu" },
+  { code: "hi", label: "Hindi" },
+  { code: "bn", label: "Bengali" },
+  { code: "ar", label: "Arabic" },
+  { code: "tr", label: "Turkish" },
+  { code: "zh", label: "Chinese" },
+  { code: "so", label: "Somali" },
+];
 
 // Encode Float32 PCM chunks to a 16-bit mono WAV Blob.
 function encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
@@ -54,6 +73,7 @@ export function VoiceRecorder({
 }) {
   const [state, setState] = useState<"idle" | "recording" | "transcribing">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>("auto");
   const streamRef = useRef<MediaStream | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
   const nodeRef = useRef<ScriptProcessorNode | null>(null);
@@ -109,8 +129,15 @@ export function VoiceRecorder({
     try {
       const fd = new FormData();
       fd.append("file", blob, "recording.wav");
+      fd.append("language", language);
+      fd.append("translate", "true");
       const res = await fetch("/api/transcribe", { method: "POST", body: fd });
-      const data = (await res.json()) as { text?: string; error?: string };
+      const data = (await res.json()) as {
+        text?: string;
+        original?: string;
+        translated?: boolean;
+        error?: string;
+      };
       if (!res.ok) throw new Error(data.error ?? "Transcription failed.");
       if (data.text) onTranscript(data.text);
     } catch (e) {
@@ -123,7 +150,7 @@ export function VoiceRecorder({
   const isBusy = state !== "idle";
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 flex-wrap">
       <button
         type="button"
         onClick={state === "recording" ? stop : start}
@@ -151,6 +178,23 @@ export function VoiceRecorder({
           </>
         )}
       </button>
+      <label className="inline-flex items-center gap-1.5 h-10 px-2.5 rounded-full border border-border bg-card text-xs text-muted-foreground hover:text-foreground transition-colors">
+        <Languages className="h-3.5 w-3.5" />
+        <span className="sr-only">Spoken language</span>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          disabled={isBusy}
+          className="bg-transparent text-xs focus:outline-none cursor-pointer pr-1 disabled:opacity-50"
+          title="Language you'll speak in — non-English is translated to English"
+        >
+          {LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.label}
+            </option>
+          ))}
+        </select>
+      </label>
       {isBusy && state === "recording" && (
         <span className="text-xs text-muted-foreground">Recording — speak freely</span>
       )}
