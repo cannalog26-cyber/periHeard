@@ -7,7 +7,6 @@ export type GapQuestionId =
   | "menstrual"
   | "sleep"
   | "genitourinary"
-  | "already_tried"
   | "goal";
 
 const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
