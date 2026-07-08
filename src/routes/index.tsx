@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2 } from "lucide-react";
+import { ArrowUp, Download, RotateCcw, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
@@ -150,10 +150,6 @@ function Index() {
         {isEmpty ? (
           <div className="max-w-3xl mx-auto px-5 py-8 min-h-full flex flex-col items-center justify-center gap-4">
             <section className="text-center space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-xs text-secondary">
-                <Sparkles className="h-3 w-3 text-secondary" />
-                Focused on perimenopause
-              </div>
               <h2 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-foreground">
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
               </h2>
