@@ -174,22 +174,46 @@ export function BriefCard({ brief }: { brief: Brief }) {
       {brief.symptom_summary?.length > 0 && (
         <Section icon={Activity} title="Symptom summary">
           <ul className="space-y-4">
-            {brief.symptom_summary.map((s, i) => (
-              <li key={i} className="border-l-2 border-secondary pl-4">
-                <div className="font-semibold text-foreground text-base leading-[1.6]">{s.cluster}</div>
-                <div className="text-base text-foreground leading-[1.6]">{s.detail}</div>
-                <div className="text-sm text-muted-foreground mt-1 leading-relaxed">{s.duration_pattern}</div>
-              </li>
-            ))}
+            {brief.symptom_summary.map((s, i) => {
+              const detail = (s.detail ?? "").trim();
+              const duration = (s.duration_pattern ?? "").trim();
+              const detailHasDuration =
+                duration.length > 0 && detail.toLowerCase().includes(duration.toLowerCase());
+              const inline =
+                duration && !detailHasDuration ? `${detail} — ${duration}` : detail;
+              return (
+                <li key={i} className="border-l-2 border-secondary pl-4">
+                  <div className="font-semibold text-foreground text-base leading-[1.6]">
+                    {s.cluster}
+                  </div>
+                  <div className="text-base text-foreground leading-[1.6]">{inline}</div>
+                </li>
+              );
+            })}
           </ul>
         </Section>
       )}
 
-      {brief.timeline && (
-        <Section icon={Clock} title="Timeline">
-          <p>{brief.timeline}</p>
-        </Section>
-      )}
+      {(() => {
+        const timeline = (brief.timeline ?? "").trim();
+        if (!timeline) return null;
+        const durations = (brief.symptom_summary ?? [])
+          .map((s) => (s.duration_pattern ?? "").trim().toLowerCase())
+          .filter(Boolean);
+        const uniqueDurations = new Set(durations);
+        // Hide timeline when it merely repeats the single shared duration.
+        if (
+          uniqueDurations.size === 1 &&
+          timeline.toLowerCase().includes([...uniqueDurations][0])
+        ) {
+          return null;
+        }
+        return (
+          <Section icon={Clock} title="Timeline">
+            <p>{timeline}</p>
+          </Section>
+        );
+      })()}
 
       {brief.impact_statement && (
         <Section icon={HeartHandshake} title="Impact on your life">
