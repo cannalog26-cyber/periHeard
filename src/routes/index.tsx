@@ -90,7 +90,7 @@ function Index() {
               <Stethoscope className="h-4 w-4" />
             </div>
             <div className="leading-tight">
-              <h1 className="font-serif text-lg font-semibold">Say This To Your GP</h1>
+              <h1 className="font-serif text-lg font-semibold">PeriHeard</h1>
             </div>
           </div>
           <div className="flex items-center gap-1">
