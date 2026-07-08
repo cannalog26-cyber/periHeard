@@ -9,6 +9,13 @@ import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
 import { cn } from "@/lib/utils";
+import { QuickQuestions } from "@/components/QuickQuestions";
+import {
+  detectGaps,
+  formatAnswersForBrief,
+  type GapAnswers,
+  type GapQuestionId,
+} from "@/lib/gap-detection";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -23,6 +30,8 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputOpen, setInputOpen] = useState(false);
+  const [gapQuestions, setGapQuestions] = useState<GapQuestionId[] | null>(null);
+  const [pendingText, setPendingText] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -32,15 +41,17 @@ function Index() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [turns.length, loading]);
+  }, [turns.length, loading, gapQuestions]);
 
-  async function submit() {
-    const text = input.trim();
-    if (!text || loading) return;
-    const userTurn: ChatTurn = { role: "user", text, id: newId(), createdAt: Date.now() };
+  async function runBrief(userText: string) {
+    const userTurn: ChatTurn = {
+      role: "user",
+      text: userText,
+      id: newId(),
+      createdAt: Date.now(),
+    };
     const nextTurns: ChatTurn[] = [...turns, userTurn];
     append(userTurn);
-    setInput("");
     setLoading(true);
     try {
       const payload = {
@@ -67,6 +78,35 @@ function Index() {
     }
   }
 
+  function submit() {
+    const text = input.trim();
+    if (!text || loading) return;
+    // First submission: interpose quick questions to fill clinical gaps.
+    if (turns.length === 0) {
+      const gaps = detectGaps(text);
+      setPendingText(text);
+      setInput("");
+      setGapQuestions(gaps);
+      return;
+    }
+    setInput("");
+    void runBrief(text);
+  }
+
+  function handleGapSubmit(answers: GapAnswers) {
+    const combined = pendingText + formatAnswersForBrief(answers);
+    setGapQuestions(null);
+    setPendingText("");
+    void runBrief(combined);
+  }
+
+  function handleGapSkip() {
+    const text = pendingText;
+    setGapQuestions(null);
+    setPendingText("");
+    void runBrief(text);
+  }
+
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
@@ -74,7 +114,8 @@ function Index() {
     }
   }
 
-  const isEmpty = hydrated && turns.length === 0;
+  const isEmpty = hydrated && turns.length === 0 && !gapQuestions;
+  const showingGaps = hydrated && turns.length === 0 && !!gapQuestions;
   const latestBrief = [...turns].reverse().find(
     (t): t is ChatTurn & { brief: Brief } => t.role === "assistant" && !!t.brief,
   )?.brief;
@@ -180,6 +221,16 @@ function Index() {
             <div className="w-full flex-1 flex flex-col">
               {chatInput(true)}
             </div>
+          </div>
+        ) : showingGaps ? (
+          <div className="max-w-3xl mx-auto px-5 py-8 w-full">
+            <QuickQuestions
+              questions={gapQuestions!}
+              onSubmit={handleGapSubmit}
+              onSkip={handleGapSkip}
+              disabled={loading}
+            />
+            <div ref={bottomRef} />
           </div>
         ) : (
           <div className="max-w-3xl mx-auto px-5 py-8 space-y-6">
