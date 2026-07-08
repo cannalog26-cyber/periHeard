@@ -46,6 +46,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
+  --color-input-card: var(--input-card);
+  --color-input-card-border: var(--input-card-border);
+  --color-background-bottom: var(--background-bottom);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -65,6 +70,7 @@
   --radius: 0.875rem;
   /* Deep maroon background, brighter red accents, white typography — HSL tokens */
   --background: hsl(0 98% 20%);
+  --background-bottom: hsl(0 90% 15%);
   --foreground: hsl(0 0% 100%);
   --card: hsl(0 97% 24%);
   --card-foreground: hsl(0 0% 100%);
@@ -72,8 +78,8 @@
   --popover-foreground: hsl(0 0% 100%);
   --primary: hsl(0 95% 26%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(0 98% 16%);
-  --secondary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(38 70% 70%);
+  --secondary-foreground: hsl(0 98% 20%);
   --muted: hsl(0 98% 16%);
   --muted-foreground: hsl(0 0% 100% / 0.72);
   --accent: hsl(0 95% 26%);
@@ -82,7 +88,11 @@
   --destructive-foreground: hsl(0 0% 100%);
   --border: hsl(0 0% 100% / 0.16);
   --input: hsl(0 0% 100% / 0.12);
+  --input-card: hsl(0 85% 24%);
+  --input-card-border: hsl(0 60% 40% / 0.4);
   --ring: hsl(0 95% 26%);
+  --cta: hsl(24 60% 96%);
+  --cta-foreground: hsl(0 98% 20%);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -105,38 +115,43 @@
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
+  --background: hsl(0 98% 20%);
+  --background-bottom: hsl(0 90% 12%);
+  --foreground: hsl(0 0% 100%);
+  --card: hsl(0 97% 22%);
+  --card-foreground: hsl(0 0% 100%);
+  --popover: hsl(0 97% 22%);
+  --popover-foreground: hsl(0 0% 100%);
+  --primary: hsl(0 95% 26%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(38 70% 70%);
+  --secondary-foreground: hsl(0 98% 20%);
+  --muted: hsl(0 98% 16%);
+  --muted-foreground: hsl(0 0% 100% / 0.72);
+  --accent: hsl(0 95% 26%);
+  --accent-foreground: hsl(0 0% 100%);
+  --destructive: hsl(0 100% 68%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(0 0% 100% / 0.16);
+  --input: hsl(0 0% 100% / 0.12);
+  --input-card: hsl(0 85% 22%);
+  --input-card-border: hsl(0 60% 35% / 0.4);
+  --ring: hsl(0 95% 26%);
+  --cta: hsl(24 60% 96%);
+  --cta-foreground: hsl(0 98% 20%);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --sidebar: hsl(0 97% 22%);
+  --sidebar-foreground: hsl(0 0% 100%);
+  --sidebar-primary: hsl(0 95% 26%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(0 95% 26%);
+  --sidebar-accent-foreground: hsl(0 0% 100%);
+  --sidebar-border: hsl(0 0% 100% / 0.16);
+  --sidebar-ring: hsl(0 95% 26%);
 }
 
 @layer base {
