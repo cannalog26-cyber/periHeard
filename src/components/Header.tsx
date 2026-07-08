@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { Menu } from "lucide-react";
-import logoAsset from "@/assets/periHeard-logo.png.asset.json";
+import { Logo } from "@/components/Logo";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
