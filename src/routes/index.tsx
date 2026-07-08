@@ -82,9 +82,6 @@ function Index() {
             </div>
             <div className="leading-tight">
               <h1 className="font-serif text-lg font-semibold">Say This To Your GP</h1>
-              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                A tool by pharmacist prescribers
-              </p>
             </div>
           </div>
           {turns.length > 0 && (
