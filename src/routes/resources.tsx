@@ -1,12 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Header } from "@/components/Header";
 
 export const Route = createFileRoute("/resources")({
+  head: () => ({
+    meta: [
+      { title: "PeriHeard Resources — Trusted menopause guidance" },
+      {
+        name: "description",
+        content:
+          "Trusted resources and guidance for perimenopause, including NICE NG23, the British Menopause Society and NHS information.",
+      },
+      { property: "og:title", content: "PeriHeard Resources" },
+      {
+        property: "og:description",
+        content:
+          "Trusted resources and guidance for perimenopause, including NICE NG23, the British Menopause Society and NHS information.",
+      },
+    ],
+  }),
   component: Resources,
 });
 
 function Resources() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background-bottom">
+      <Header />
       <main className="flex-1 w-full">
         <div className="max-w-3xl mx-auto px-5 py-12 space-y-8">
           <div className="text-center space-y-4">
