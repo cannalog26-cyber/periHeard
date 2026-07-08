@@ -27,7 +27,6 @@ export function detectGaps(text: string): GapQuestionId[] {
   if (!PATTERNS.menstrual.test(t)) gaps.push("menstrual");
   if (!PATTERNS.sleep.test(t)) gaps.push("sleep");
   if (!PATTERNS.genitourinary.test(t)) gaps.push("genitourinary");
-  if (!PATTERNS.already_tried.test(t)) gaps.push("already_tried");
   // Goal is almost never volunteered up-front - always ask.
   gaps.push("goal");
   return gaps;
