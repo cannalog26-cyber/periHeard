@@ -15,7 +15,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { useState } from "react";
-import { saveBriefAsPdf } from "@/lib/print-brief";
+import { saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
 
 function Section({
   icon: Icon,
@@ -298,7 +298,19 @@ export function BriefCard({ brief }: { brief: Brief }) {
           <CopyButton text={briefToPlainText(brief)} />
           <button
             type="button"
-            onClick={() => saveBriefAsPdf(brief)}
+            onClick={() => {
+              // html2pdf.js is unreliable on mobile browsers (iOS Safari blocks
+              // the blob download and the offscreen render often comes out blank).
+              // Fall back to the native print dialog, which offers "Save to PDF"
+              // / "Save to Files" on both iOS and Android.
+              const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+              const isMobile = /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i.test(ua);
+              if (isMobile) {
+                openBriefForPrint(brief);
+              } else {
+                saveBriefAsPdf(brief).catch(() => openBriefForPrint(brief));
+              }
+            }}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
           >
             <Download className="h-3.5 w-3.5" />
