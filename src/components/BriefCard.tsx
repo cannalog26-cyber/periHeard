@@ -11,11 +11,11 @@ import {
   Briefcase,
   Copy,
   Check,
-  Printer,
+  Download,
   BookOpen,
 } from "lucide-react";
 import { useState } from "react";
-import { openBriefForPrint } from "@/lib/print-brief";
+import { saveBriefAsPdf } from "@/lib/print-brief";
 
 function Section({
   icon: Icon,
@@ -274,11 +274,11 @@ export function BriefCard({ brief }: { brief: Brief }) {
           <CopyButton text={briefToPlainText(brief)} />
           <button
             type="button"
-            onClick={() => openBriefForPrint(brief)}
+            onClick={() => saveBriefAsPdf(brief)}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
           >
-            <Printer className="h-3.5 w-3.5" />
-            Patient PDF
+            <Download className="h-3.5 w-3.5" />
+            Save as PDF
           </button>
         </div>
       </div>
