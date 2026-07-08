@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, UserCircle2 } from "lucide-react";
+import { ArrowUp, Download, Printer, RotateCcw, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
-import { saveConversationAsPdf } from "@/lib/print-brief";
+import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
 
@@ -74,6 +74,9 @@ function Index() {
   }
 
   const isEmpty = hydrated && turns.length === 0;
+  const latestBrief = [...turns].reverse().find(
+    (t): t is ChatTurn & { brief: Brief } => t.role === "assistant" && !!t.brief,
+  )?.brief;
 
   const chatInput = (
     <>
@@ -208,13 +211,37 @@ function Index() {
             {inputOpen ? (
               chatInput
             ) : (
-              <button
-                onClick={() => setInputOpen(true)}
-                className="w-full inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
-              >
-                Update Brief
-                <ArrowUp className="h-4 w-4" />
-              </button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <button
+                  onClick={() => setInputOpen(true)}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+                >
+                  Update Brief
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                {latestBrief && (
+                  <>
+                    <button
+                      onClick={() => {
+                        void saveBriefAsPdf(latestBrief);
+                      }}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download as PDF
+                    </button>
+                    <button
+                      onClick={() => openBriefForPrint(latestBrief)}
+                      title="Print"
+                      aria-label="Print"
+                      className="inline-flex items-center justify-center gap-1.5 h-12 px-4 rounded-full border border-cta/40 text-cta text-sm font-medium hover:bg-cta/10 transition-all"
+                    >
+                      <Printer className="h-4 w-4" />
+                      Print
+                    </button>
+                  </>
+                )}
+              </div>
             )}
           </div>
         </div>
