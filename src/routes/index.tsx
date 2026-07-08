@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2 } from "lucide-react";
+import { ArrowUp, Download, RotateCcw, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
