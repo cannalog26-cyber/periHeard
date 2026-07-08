@@ -177,8 +177,8 @@ function Index() {
                 1 in 5 women say they've been brushed off. We built periHeard so everyone walks in prepared, and walks out heard.
               </p>
             </section>
-            <div className="w-full">
-              {chatInput}
+            <div className="w-full flex-1 flex flex-col">
+              {chatInput(true)}
             </div>
           </div>
         ) : (
