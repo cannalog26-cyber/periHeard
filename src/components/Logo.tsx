@@ -7,6 +7,7 @@ export function Logo({ className }: { className?: string }) {
       className={cn("block h-9 w-auto", className)}
       aria-label="PeriHeard"
       role="img"
+      overflow="visible"
     >
       <text
         x="0"
@@ -23,11 +24,12 @@ export function Logo({ className }: { className?: string }) {
       </text>
       {/* Berry dot over the ascender of the final "d" */}
       <circle
-        cx="113.5"
-        cy="5"
-        r="3.5"
+        cx="106.5"
+        cy="3.5"
+        r="3.2"
         className="fill-current text-accent"
       />
     </svg>
   );
 }
+
