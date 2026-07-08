@@ -107,7 +107,7 @@ function Index() {
             <section className="text-center py-8 space-y-4">
               <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-accent" />
-                Focused on perimenopause &amp; menopause
+                Focused on perimenopause
               </div>
               <h2 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-foreground">
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
