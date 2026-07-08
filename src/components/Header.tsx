@@ -34,7 +34,7 @@ export function Header({ actions }: { actions?: ReactNode }) {
           {actions}
           <Link
             to="/auth"
-            className="inline-flex items-center gap-1.5 h-10 px-4 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-colors"
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-cta text-cta-foreground text-xs font-bold whitespace-nowrap hover:bg-cta/90 transition-colors"
           >
             Sign Up
           </Link>
