@@ -79,9 +79,16 @@ function Index() {
     (t): t is ChatTurn & { brief: Brief } => t.role === "assistant" && !!t.brief,
   )?.brief;
 
-  const chatInput = (
+  const chatInput = (expanded = false) => (
     <>
-      <div className="rounded-2xl border border-input-card-border bg-input-card shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all">
+      <div
+        className={cn(
+          "rounded-2xl border border-input-card-border shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all overflow-hidden",
+          expanded
+            ? "flex-1 flex flex-col bg-gradient-to-b from-background to-background-bottom"
+            : "bg-input-card",
+        )}
+      >
         <textarea
           ref={textareaRef}
           value={input}
@@ -92,8 +99,11 @@ function Index() {
               ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
               : "Add more detail, correct something, or ask a follow-up…"
           }
-          rows={6}
-          className="w-full bg-transparent resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none"
+          rows={expanded ? 1 : 6}
+          className={cn(
+            "w-full resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none",
+            expanded ? "flex-1" : "bg-transparent",
+          )}
         />
         <div className="flex items-center justify-between gap-3 px-3 pb-3">
           <VoiceRecorder
