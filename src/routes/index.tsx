@@ -126,10 +126,12 @@ function Index() {
                 onClick={() => {
                   void saveConversationAsPdf(turns);
                 }}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
+                title="Save conversation"
+                aria-label="Save conversation"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors whitespace-nowrap"
               >
                 <Download className="h-3.5 w-3.5" />
-                Save conversation
+                <span className="hidden lg:inline">Save conversation</span>
               </button>
               <button
                 onClick={() => {
@@ -138,10 +140,12 @@ function Index() {
                     setTimeout(() => textareaRef.current?.focus(), 50);
                   }
                 }}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
+                title="New conversation"
+                aria-label="New conversation"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors whitespace-nowrap"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                New conversation
+                <span className="hidden lg:inline">New conversation</span>
               </button>
             </>
           ) : null
