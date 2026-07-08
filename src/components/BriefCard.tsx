@@ -14,7 +14,7 @@ import {
   Printer,
 } from "lucide-react";
 import { useState } from "react";
-import { openBriefForPrint } from "@/lib/print-brief";
+import { openBriefForPrint, openClinicalBriefForPrint } from "@/lib/print-brief";
 
 function Section({
   icon: Icon,
@@ -277,8 +277,18 @@ export function BriefCard({ brief }: { brief: Brief }) {
             className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
           >
             <Printer className="h-3.5 w-3.5" />
-            Save as PDF
+            Patient PDF
           </button>
+          {brief.clinical && (
+            <button
+              type="button"
+              onClick={() => openClinicalBriefForPrint(brief)}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded-md hover:bg-primary/10 border border-primary/20"
+            >
+              <Stethoscope className="h-3.5 w-3.5" />
+              GP clinical PDF
+            </button>
+          )}
         </div>
       </div>
     </div>
