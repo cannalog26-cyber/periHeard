@@ -8,7 +8,6 @@ import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
-import { cn } from "@/lib/utils";
 import { QuickQuestions } from "@/components/QuickQuestions";
 import {
   detectGaps,
@@ -38,6 +37,16 @@ function Index() {
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
+
+  // Auto-grow the textarea while keeping a comfortable minimum height.
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 24;
+    const minHeight = Math.round(6.5 * lineHeight);
+    el.style.height = `${Math.max(el.scrollHeight, minHeight)}px`;
+  }, [input, inputOpen]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -123,12 +132,7 @@ function Index() {
   const chatInput = (expanded = false) => (
     <>
       <div
-        className={cn(
-          "rounded-2xl border border-input-card-border shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all overflow-hidden",
-          expanded
-            ? "flex-1 flex flex-col bg-gradient-to-b from-background to-background-bottom"
-            : "bg-input-card",
-        )}
+        className="rounded-2xl border border-input-card-border shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all overflow-hidden bg-input-card"
       >
         <textarea
           ref={textareaRef}
@@ -140,11 +144,8 @@ function Index() {
               ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
               : "Add more detail, correct something, or ask a follow-up…"
           }
-          rows={expanded ? 1 : 6}
-          className={cn(
-            "w-full resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none",
-            expanded ? "flex-1" : "bg-transparent",
-          )}
+          rows={6}
+          className="w-full resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none bg-transparent min-h-[160px]"
         />
         <div className="flex items-center justify-between gap-3 px-3 pb-3">
           <VoiceRecorder
@@ -218,7 +219,7 @@ function Index() {
                 1 in 5 women say they've been brushed off. We built periHeard so everyone walks in prepared, and walks out heard.
               </p>
             </section>
-            <div className="w-full flex-1 flex flex-col">
+            <div className="w-full flex flex-col">
               {chatInput(true)}
             </div>
           </div>
