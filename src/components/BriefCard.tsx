@@ -12,6 +12,7 @@ import {
   Copy,
   Check,
   Printer,
+  BookOpen,
 } from "lucide-react";
 import { useState } from "react";
 import { openBriefForPrint } from "@/lib/print-brief";
