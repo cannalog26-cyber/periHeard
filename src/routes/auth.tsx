@@ -1,9 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast, Toaster } from "sonner";
+import { Header } from "@/components/Header";
 
 export const Route = createFileRoute("/auth")({
+  head: () => ({
+    meta: [
+      { title: "PeriHeard — Sign up or sign in" },
+      {
+        name: "description",
+        content: "Sign up or sign in to PeriHeard to save your briefs and join the community.",
+      },
+    ],
+  }),
   component: Auth,
 });
 
@@ -51,13 +61,7 @@ function Auth() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background-bottom">
       <Toaster position="top-center" richColors />
-      <header className="border-b border-border/60 bg-background/80 backdrop-blur">
-        <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
-          <Link to="/" className="font-serif text-xl font-semibold text-foreground">
-            PeriHeard
-          </Link>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1 w-full flex items-center justify-center p-5">
         <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 space-y-5">
@@ -140,7 +144,7 @@ function Auth() {
                 fill="#FBBC05"
               />
               <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                d="MM12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 fill="#EA4335"
               />
             </svg>
