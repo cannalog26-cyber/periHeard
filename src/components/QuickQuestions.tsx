@@ -151,9 +151,6 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
             Some symptoms are easy to overlook or feel awkward to mention - any vaginal dryness,
             discomfort during sex, or urinary changes?
           </label>
-          <p className="text-xs text-muted-foreground">
-            These are really common and often go undiscussed. There are gentle, effective options.
-          </p>
           <div className="flex flex-wrap gap-2">
             {(["yes", "no", "prefer_not"] as const).map((v) => (
               <Chip
