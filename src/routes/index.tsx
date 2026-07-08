@@ -21,6 +21,7 @@ function Index() {
   const { turns, append, reset, hydrated } = useConversation();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [inputOpen, setInputOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -60,6 +61,7 @@ function Index() {
       toast.error(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setLoading(false);
+      setInputOpen(false);
       setTimeout(() => textareaRef.current?.focus(), 50);
     }
   }
@@ -108,7 +110,7 @@ function Index() {
         </div>
       </div>
       <p className="text-[11px] text-foreground/75 text-center mt-2">
-        Not a diagnostic tool. Nothing you type leaves your browser except to build the brief.
+        This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.
       </p>
     </>
   );
@@ -199,7 +201,17 @@ function Index() {
       {!isEmpty && (
         <div className="sticky bottom-0 border-t border-border/60 bg-background/90 backdrop-blur">
           <div className="max-w-3xl mx-auto px-5 py-4">
-            {chatInput}
+            {inputOpen ? (
+              chatInput
+            ) : (
+              <button
+                onClick={() => setInputOpen(true)}
+                className="w-full inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+              >
+                Update Brief
+                <ArrowUp className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
       )}
