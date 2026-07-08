@@ -77,6 +77,11 @@ Respond with ONLY valid JSON, no markdown fences, no preamble. You must ALWAYS p
   }
 }
 
+BRING WITH YOU
+The "bring_with_you" array should help the user arrive prepared. Always include these two standing items alongside anything personalised from their story:
+1. A note to list current contraception and any hormonal medication they are taking (including doses if known), because the GP will ask.
+2. A short, supportive line encouraging them to mention to the GP if any of the following are present, as the GP will want to know: very heavy or prolonged bleeding; bleeding between periods or after sex; or any bleeding after 12 months without a period. Frame this as "your GP will want to know" rather than as an alarm or warning. Keep the tone warm and matter-of-fact.
+
 CLINICAL BRIEF STYLE
 The "clinical" object is for the GP, not the patient. Use compact clinical prose with proper terminology (e.g. "vasomotor sx", "GSM", "amenorrhoea x6/12", "trial of transdermal E2 + micronised progesterone per NG23", "TFTs, FBC, ferritin, HbA1c to exclude alternative aetiologies"). Abbreviations acceptable. Group symptoms by system (Vasomotor, Cycle, Psychological, Cognitive, Musculoskeletal, Genitourinary, Sleep, Other). Reference NICE NG23 by name when relevant, and cite BMS guidance where it adds specificity (e.g. progestogen choice, testosterone, POI). Populate "guideline_refs" with concise citations such as "NICE NG23" and "BMS consensus" (do not include URLs). Never invent history, medications, or findings the patient did not describe — if unknown, say "not established at this consultation" or omit. Suggested actions must be options for the GP to consider, phrased as such (e.g. "Consider…", "Discuss…", "Review in 3 months if…"), never prescriptions or instructions. Investigations should only be listed when clinically indicated to exclude differentials; do NOT suggest FSH in a woman ≥45 with typical symptoms (per NG23). Keep each list to a maximum of 6 items.
 
