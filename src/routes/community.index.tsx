@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { MessageCircle, BookOpen, HelpCircle, Users } from "lucide-react";
+import { MessageCircle, BookOpen, HelpCircle, Users, Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { NewPostDialog } from "@/components/NewPostDialog";
 import { timeAgo, type ForumCategory, type ForumPost } from "@/lib/forum-types";
@@ -17,6 +17,7 @@ type PostWithMeta = ForumPost & {
 
 function CommunityIndex() {
   const [filter, setFilter] = useState<"all" | "story" | "question">("all");
+  const [search, setSearch] = useState("");
 
   const categoriesQ = useQuery({
     queryKey: ["forum-categories"],
@@ -31,7 +32,7 @@ function CommunityIndex() {
   });
 
   const postsQ = useQuery({
-    queryKey: ["forum-posts", "recent", filter],
+    queryKey: ["forum-posts", "recent", filter, search.trim().toLowerCase()],
     queryFn: async () => {
       let q = supabase
         .from("forum_posts")
@@ -39,8 +40,13 @@ function CommunityIndex() {
           "*, forum_categories(slug, name), reply_count:forum_replies(count)",
         )
         .order("created_at", { ascending: false })
-        .limit(30);
+        .limit(50);
       if (filter !== "all") q = q.eq("kind", filter);
+      const term = search.trim();
+      if (term) {
+        const escaped = term.replace(/[%,()]/g, " ");
+        q = q.or(`title.ilike.%${escaped}%,body.ilike.%${escaped}%`);
+      }
       const { data, error } = await q;
       if (error) throw error;
       return data as unknown as PostWithMeta[];
@@ -112,6 +118,27 @@ function CommunityIndex() {
               </button>
             ))}
           </div>
+        </div>
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search posts by keyword…"
+            aria-label="Search posts"
+            className="w-full h-10 pl-9 pr-9 rounded-lg border border-border bg-card text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-md inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
         <PostList posts={postsQ.data ?? []} loading={postsQ.isLoading} />
       </section>
