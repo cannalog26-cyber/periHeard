@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, RotateCcw, Sparkles, Stethoscope, UserCircle2 } from "lucide-react";
+import { ArrowUp, LayoutDashboard, RotateCcw, Sparkles, Stethoscope, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
+import { addToVault } from "@/lib/use-vault";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 
 export const Route = createFileRoute("/")({
@@ -54,6 +55,14 @@ function Index() {
         throw new Error(data.error ?? "Something went wrong.");
       }
       append({ role: "assistant", brief: data.brief, id: newId(), createdAt: Date.now() });
+      // Auto-save usable briefs to the dashboard vault
+      if (
+        !data.brief.out_of_scope &&
+        !data.brief.clarifying_questions?.length &&
+        data.brief.one_line_summary
+      ) {
+        addToVault(data.brief);
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -84,7 +93,15 @@ function Index() {
               <h1 className="font-serif text-lg font-semibold">Say This To Your GP</h1>
             </div>
           </div>
-          {turns.length > 0 && (
+          <div className="flex items-center gap-1">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              Dashboard
+            </Link>
+            {turns.length > 0 && (
             <button
               onClick={() => {
                 if (confirm("Start a new conversation? Your current brief will be cleared.")) {
@@ -97,7 +114,8 @@ function Index() {
               <RotateCcw className="h-3.5 w-3.5" />
               New conversation
             </button>
-          )}
+            )}
+          </div>
         </div>
       </header>
 
