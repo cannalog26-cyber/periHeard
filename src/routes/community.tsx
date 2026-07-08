@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
-      { title: "PeriHeard Community — Share your story, ask questions" },
+      { title: "PeriHeard Community - Share your story, ask questions" },
       {
         name: "description",
         content:

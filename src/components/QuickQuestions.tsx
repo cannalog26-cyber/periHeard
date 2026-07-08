@@ -73,7 +73,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
       <div className="space-y-1">
         <h3 className="font-serif text-2xl font-semibold text-foreground">A few quick questions</h3>
         <p className="text-sm text-muted-foreground">
-          These help fill in the picture so your brief is as useful as possible. All optional — skip
+          These help fill in the picture so your brief is as useful as possible. All optional - skip
           any that don't apply.
         </p>
       </div>
@@ -122,7 +122,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
               }))
             }
             rows={2}
-            placeholder="Optional — e.g. last period was about 3 months ago, or anything else that feels relevant"
+            placeholder="Optional - e.g. last period was about 3 months ago, or anything else that feels relevant"
             className="w-full mt-1 rounded-xl border border-input-card-border bg-background/40 px-3 py-2 text-[14px] leading-relaxed placeholder:text-foreground/60 focus:outline-none focus:border-secondary/60"
           />
         </div>
@@ -148,7 +148,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
       {questions.includes("genitourinary") && (
         <div className="space-y-2">
           <label className="block text-[15px] font-medium text-foreground">
-            Some symptoms are easy to overlook or feel awkward to mention — any vaginal dryness,
+            Some symptoms are easy to overlook or feel awkward to mention - any vaginal dryness,
             discomfort during sex, or urinary changes?
           </label>
           <p className="text-xs text-muted-foreground">

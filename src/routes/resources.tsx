@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 export const Route = createFileRoute("/resources")({
   head: () => ({
     meta: [
-      { title: "PeriHeard Resources — Trusted menopause guidance" },
+      { title: "PeriHeard Resources - Trusted menopause guidance" },
       {
         name: "description",
         content:
@@ -45,7 +45,7 @@ function Resources() {
             >
               <h2 className="font-serif text-xl font-semibold text-foreground mb-2">NICE NG23</h2>
               <p className="text-[15px] text-muted-foreground leading-relaxed">
-                Menopause: identification and management — the clinical guideline that anchors every brief.
+                Menopause: identification and management - the clinical guideline that anchors every brief.
               </p>
             </a>
 

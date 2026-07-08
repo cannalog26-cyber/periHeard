@@ -65,7 +65,7 @@ export const Route = createFileRoute("/api/chat")({
           const errText = await upstream.text().catch(() => "");
           const status = upstream.status;
           let userMsg = "The assistant is having trouble responding. Please try again.";
-          if (status === 429) userMsg = "Too many requests just now — please wait a moment and try again.";
+          if (status === 429) userMsg = "Too many requests just now - please wait a moment and try again.";
           if (status === 402) userMsg = "AI credits have run out on this workspace.";
           return new Response(
             JSON.stringify({ error: userMsg, detail: errText.slice(0, 500) }),

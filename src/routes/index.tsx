@@ -141,7 +141,7 @@ function Index() {
           onKeyDown={onKeyDown}
           placeholder={
             turns.length === 0
-              ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
+              ? "Describe what you've been experiencing - how long, how often, what it stops you doing. Ramble if you need to."
               : "Add more detail, correct something, or ask a follow-up…"
           }
           rows={6}

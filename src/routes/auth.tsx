@@ -8,7 +8,7 @@ import { Header } from "@/components/Header";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "PeriHeard — Sign up or sign in" },
+      { title: "PeriHeard - Sign up or sign in" },
       {
         name: "description",
         content: "Sign up or sign in to PeriHeard to save your briefs and join the community.",
