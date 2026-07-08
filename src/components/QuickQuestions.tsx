@@ -165,21 +165,6 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
         </div>
       )}
 
-      {questions.includes("already_tried") && (
-        <div className="space-y-2">
-          <label className="block text-[15px] font-medium text-foreground">
-            Have you seen a GP about this before, or tried anything yourself (medication,
-            supplements, lifestyle changes)?
-          </label>
-          <textarea
-            value={answers.already_tried ?? ""}
-            onChange={(e) => update("already_tried", e.target.value)}
-            rows={2}
-            placeholder="Optional"
-            className="w-full rounded-xl border border-input-card-border bg-background/40 px-3 py-2 text-[14px] leading-relaxed placeholder:text-foreground/60 focus:outline-none focus:border-secondary/60"
-          />
-        </div>
-      )}
 
       {questions.includes("goal") && (
         <div className="space-y-2">
