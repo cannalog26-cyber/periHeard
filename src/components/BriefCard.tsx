@@ -282,6 +282,10 @@ export function BriefCard({ brief }: { brief: Brief }) {
           </button>
         </div>
       </div>
+
+      <Section icon={BookOpen} title="Resources">
+        <p className="text-muted-foreground">Links and resources will be added here soon.</p>
+      </Section>
     </div>
   );
 }
