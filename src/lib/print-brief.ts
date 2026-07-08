@@ -303,15 +303,16 @@ export async function saveConversationAsPdf(turns: ChatTurn[]) {
 }
 
 function openHtml(html: string) {
-  const w = window.open("", "_blank", "width=900,height=1000");
+  // Blob URLs are the most reliable path on mobile Safari / Chrome, where
+  // `window.open("")` + `document.write` is often blocked or renders blank.
+  const blob = new Blob([html], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, "_blank");
   if (!w) {
-    // Popup blocked - fall back to a data URL in the same tab
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    window.open(url, "_blank");
-    return;
+    // Popup blocked - navigate the current tab instead so the user still
+    // gets to the printable view.
+    window.location.href = url;
   }
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
+  // Revoke later so the new tab has time to load.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
