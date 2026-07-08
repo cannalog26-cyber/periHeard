@@ -21,6 +21,7 @@ function Index() {
   const { turns, append, reset, hydrated } = useConversation();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [inputOpen, setInputOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
