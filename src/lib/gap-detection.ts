@@ -7,7 +7,6 @@ export type GapQuestionId =
   | "menstrual"
   | "sleep"
   | "genitourinary"
-  | "already_tried"
   | "goal";
 
 const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
@@ -18,8 +17,6 @@ const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
     /\b(sleep\w*|insomnia|awake|waking|wake\s+up|can'?t\s+sleep|restless\s+nights?|tired|exhaust\w*|fatigue)\b/i,
   genitourinary:
     /\b(vagina\w*|dryness|painful\s+sex|sex\s+is|libido|sex\s*drive|urin\w*|bladder|uti|utis|incontinen\w*|leak\w*|prolapse|pelvic)\b/i,
-  already_tried:
-    /\b(tried|taking|been\s+on|hrt|patch(es)?|gel|tablet|pill|supplement|vitamin|magnesium|evening\s+primrose|black\s+cohosh|seen\s+(a|my)\s+(gp|doctor)|been\s+to\s+(the\s+)?(gp|doctor)|prescribed|antidepressant|ssri|sertraline|citalopram|fluoxetine)\b/i,
 };
 
 export function detectGaps(text: string): GapQuestionId[] {
@@ -30,7 +27,6 @@ export function detectGaps(text: string): GapQuestionId[] {
   if (!PATTERNS.menstrual.test(t)) gaps.push("menstrual");
   if (!PATTERNS.sleep.test(t)) gaps.push("sleep");
   if (!PATTERNS.genitourinary.test(t)) gaps.push("genitourinary");
-  if (!PATTERNS.already_tried.test(t)) gaps.push("already_tried");
   // Goal is almost never volunteered up-front - always ask.
   gaps.push("goal");
   return gaps;
@@ -41,7 +37,6 @@ export type GapAnswers = {
   menstrual?: { chips: string[]; note?: string };
   sleep?: "fine" | "disturbed" | "very_poor";
   genitourinary?: "yes" | "no" | "prefer_not";
-  already_tried?: string;
   goal?: string[];
 };
 
@@ -72,9 +67,6 @@ export function formatAnswersForBrief(answers: GapAnswers): string {
       prefer_not: "Prefers not to say.",
     } as const;
     lines.push(`Vaginal / urinary symptoms: ${map[answers.genitourinary]}`);
-  }
-  if (answers.already_tried?.trim()) {
-    lines.push(`Already tried / previous GP contact: ${answers.already_tried.trim()}`);
   }
   if (answers.goal && answers.goal.length) {
     lines.push(`What I'd most like from this appointment: ${answers.goal.join("; ")}`);
