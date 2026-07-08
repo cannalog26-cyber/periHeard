@@ -1,13 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2, Users } from "lucide-react";
+import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
-import logoAsset from "@/assets/periHeard-logo.png.asset.json";
+import { Header } from "@/components/Header";
 
 export const Route = createFileRoute("/")({
   component: Index,
