@@ -61,6 +61,7 @@ function Index() {
       toast.error(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
       setLoading(false);
+      setInputOpen(false);
       setTimeout(() => textareaRef.current?.focus(), 50);
     }
   }
