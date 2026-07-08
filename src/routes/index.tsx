@@ -8,7 +8,6 @@ import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
-import { cn } from "@/lib/utils";
 import { QuickQuestions } from "@/components/QuickQuestions";
 import {
   detectGaps,
