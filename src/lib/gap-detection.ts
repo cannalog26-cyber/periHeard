@@ -17,8 +17,6 @@ const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
     /\b(sleep\w*|insomnia|awake|waking|wake\s+up|can'?t\s+sleep|restless\s+nights?|tired|exhaust\w*|fatigue)\b/i,
   genitourinary:
     /\b(vagina\w*|dryness|painful\s+sex|sex\s+is|libido|sex\s*drive|urin\w*|bladder|uti|utis|incontinen\w*|leak\w*|prolapse|pelvic)\b/i,
-  already_tried:
-    /\b(tried|taking|been\s+on|hrt|patch(es)?|gel|tablet|pill|supplement|vitamin|magnesium|evening\s+primrose|black\s+cohosh|seen\s+(a|my)\s+(gp|doctor)|been\s+to\s+(the\s+)?(gp|doctor)|prescribed|antidepressant|ssri|sertraline|citalopram|fluoxetine)\b/i,
 };
 
 export function detectGaps(text: string): GapQuestionId[] {
