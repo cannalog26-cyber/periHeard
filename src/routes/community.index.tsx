@@ -67,7 +67,7 @@ function CommunityIndex() {
         </h2>
         <p className="text-[15px] text-muted-foreground max-w-xl mx-auto leading-relaxed">
           Share your story, ask a question, or read what others are going through. Posts are
-          anonymous — you just pick a display name.
+          anonymous - you just pick a display name.
         </p>
         <div className="flex justify-center pt-2">
           <NewPostDialog categories={categories} />

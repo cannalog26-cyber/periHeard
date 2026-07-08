@@ -69,14 +69,14 @@ export function briefToPrintableHtml(brief: Brief): string {
       ),
     );
   if (brief.red_flags?.length)
-    parts.push(section("Red flags — seek prompt review", list(brief.red_flags), "urgent"));
+    parts.push(section("Red flags - seek prompt review", list(brief.red_flags), "urgent"));
   if (brief.what_to_expect)
     parts.push(section("What a good consultation looks like", `<p>${esc(brief.what_to_expect)}</p>`));
   if (brief.bring_with_you?.length)
     parts.push(section("Bring with me", list(brief.bring_with_you)));
 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
-<title>Appointment brief — ${dateStr}</title>
+<title>Appointment brief - ${dateStr}</title>
 <style>
   @page { size: A4; margin: 18mm 16mm; }
   * { box-sizing: border-box; }
@@ -183,7 +183,7 @@ function briefToInnerHtml(brief: Brief): string {
   const html = briefToPrintableHtml(brief);
   const match = html.match(/<div class="page">([\s\S]*?)<\/div>\s*<script/);
   if (!match) return "";
-  // Strip header/footer — we'll add our own per turn.
+  // Strip header/footer - we'll add our own per turn.
   return match[1]
     .replace(/<header>[\s\S]*?<\/header>/, "")
     .replace(/<footer>[\s\S]*?<\/footer>/, "");
@@ -218,7 +218,7 @@ function conversationToPrintableHtml(turns: ChatTurn[]): string {
   }
 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
-<title>Conversation brief — ${dateStr}</title>
+<title>Conversation brief - ${dateStr}</title>
 <style>
   @page { size: A4; margin: 18mm 16mm; }
   * { box-sizing: border-box; }
@@ -305,7 +305,7 @@ export async function saveConversationAsPdf(turns: ChatTurn[]) {
 function openHtml(html: string) {
   const w = window.open("", "_blank", "width=900,height=1000");
   if (!w) {
-    // Popup blocked — fall back to a data URL in the same tab
+    // Popup blocked - fall back to a data URL in the same tab
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");

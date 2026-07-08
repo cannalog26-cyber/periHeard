@@ -180,7 +180,7 @@ export function BriefCard({ brief }: { brief: Brief }) {
               const detailHasDuration =
                 duration.length > 0 && detail.toLowerCase().includes(duration.toLowerCase());
               const inline =
-                duration && !detailHasDuration ? `${detail} — ${duration}` : detail;
+                duration && !detailHasDuration ? `${detail} - ${duration}` : detail;
               return (
                 <li key={i} className="border-l-2 border-secondary pl-4">
                   <div className="font-semibold text-foreground text-base leading-[1.6]">
@@ -261,7 +261,7 @@ export function BriefCard({ brief }: { brief: Brief }) {
       )}
 
       {brief.red_flags?.length > 0 && (
-        <Section icon={ShieldAlert} title="Red flags — seek prompt review" tone="urgent">
+        <Section icon={ShieldAlert} title="Red flags - seek prompt review" tone="urgent">
           <ul className="space-y-2">
             {brief.red_flags.map((x, i) => (
               <li key={i} className="flex gap-2">

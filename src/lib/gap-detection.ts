@@ -25,13 +25,13 @@ const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
 export function detectGaps(text: string): GapQuestionId[] {
   const t = text ?? "";
   const gaps: GapQuestionId[] = [];
-  // Vasomotor — always ask if not clearly mentioned (diagnostically important)
+  // Vasomotor - always ask if not clearly mentioned (diagnostically important)
   if (!PATTERNS.vasomotor.test(t)) gaps.push("vasomotor");
   if (!PATTERNS.menstrual.test(t)) gaps.push("menstrual");
   if (!PATTERNS.sleep.test(t)) gaps.push("sleep");
   if (!PATTERNS.genitourinary.test(t)) gaps.push("genitourinary");
   if (!PATTERNS.already_tried.test(t)) gaps.push("already_tried");
-  // Goal is almost never volunteered up-front — always ask.
+  // Goal is almost never volunteered up-front - always ask.
   gaps.push("goal");
   return gaps;
 }
@@ -59,7 +59,7 @@ export function formatAnswersForBrief(answers: GapAnswers): string {
     const parts: string[] = [];
     if (answers.menstrual.chips.length) parts.push(answers.menstrual.chips.join(", "));
     if (answers.menstrual.note?.trim()) parts.push(answers.menstrual.note.trim());
-    if (parts.length) lines.push(`Periods: ${parts.join(" — ")}`);
+    if (parts.length) lines.push(`Periods: ${parts.join(" - ")}`);
   }
   if (answers.sleep) {
     const map = { fine: "Fine", disturbed: "Disturbed", very_poor: "Very poor" } as const;
@@ -67,7 +67,7 @@ export function formatAnswersForBrief(answers: GapAnswers): string {
   }
   if (answers.genitourinary) {
     const map = {
-      yes: "Yes — vaginal dryness, discomfort during sex, and/or urinary changes.",
+      yes: "Yes - vaginal dryness, discomfort during sex, and/or urinary changes.",
       no: "No vaginal or urinary symptoms.",
       prefer_not: "Prefers not to say.",
     } as const;

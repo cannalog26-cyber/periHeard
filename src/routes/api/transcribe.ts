@@ -13,7 +13,7 @@ async function translateToEnglish(key: string, text: string, sourceLang: string)
         {
           role: "system",
           content:
-            "You are a medical translator. Translate the user's message into natural, clinical English suitable for a UK GP. Preserve every symptom, timeline, medication, dose, and emotional nuance. Do NOT summarise, add, or diagnose. If the text is already English, return it unchanged. Reply with the translation only — no preamble, no quotes.",
+            "You are a medical translator. Translate the user's message into natural, clinical English suitable for a UK GP. Preserve every symptom, timeline, medication, dose, and emotional nuance. Do NOT summarise, add, or diagnose. If the text is already English, return it unchanged. Reply with the translation only - no preamble, no quotes.",
         },
         {
           role: "user",
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/api/transcribe")({
         const translate = String(form.get("translate") ?? "true") === "true";
         if (!(file instanceof File) || file.size < 1024) {
           return new Response(
-            JSON.stringify({ error: "That recording was empty — please try again." }),
+            JSON.stringify({ error: "That recording was empty - please try again." }),
             { status: 400, headers: { "Content-Type": "application/json" } },
           );
         }

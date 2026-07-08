@@ -122,7 +122,7 @@ export function VoiceRecorder({
     sourceRef.current = null;
     if (blob.size < 2048) {
       setState("idle");
-      setError("That recording was too short — please try again.");
+      setError("That recording was too short - please try again.");
       return;
     }
     setState("transcribing");
@@ -186,7 +186,7 @@ export function VoiceRecorder({
           onChange={(e) => setLanguage(e.target.value)}
           disabled={isBusy}
           className="bg-transparent text-xs focus:outline-none cursor-pointer pr-1 disabled:opacity-50"
-          title="Language you'll speak in — non-English is translated to English"
+          title="Language you'll speak in - non-English is translated to English"
         >
           {LANGUAGES.map((l) => (
             <option key={l.code} value={l.code}>
@@ -196,7 +196,7 @@ export function VoiceRecorder({
         </select>
       </label>
       {isBusy && state === "recording" && (
-        <span className="text-xs text-muted-foreground">Recording — speak freely</span>
+        <span className="text-xs text-muted-foreground">Recording - speak freely</span>
       )}
       {error && <span className="text-xs text-[color:var(--urgent)]">{error}</span>}
     </div>
