@@ -122,7 +122,7 @@ export function briefToPrintableHtml(brief: Brief): string {
     <div class="meta">Prepared ${esc(dateStr)}</div>
   </header>
   ${parts.join("\n")}
-  <footer>${esc(brief.disclaimer || "This tool organises your story — it doesn't diagnose. Decisions about your care are made with your clinician.")}</footer>
+  <footer>${esc(brief.disclaimer || "This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.")}</footer>
 </div>
 <script>window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 400); });</script>
 </body></html>`;
