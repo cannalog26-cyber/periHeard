@@ -174,7 +174,7 @@ function Index() {
               <h2 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-foreground">
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
               </h2>
-              <p className="text-[15px] text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
                 Tell your story in your own words. It doesn't need to be perfect—write as much or as
                 little as you like. We'll organise your symptoms, timeline and how they're affecting
                 your daily life into a clear one-page summary based on NICE guidance. We'll also help
