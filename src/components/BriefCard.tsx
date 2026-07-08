@@ -307,6 +307,11 @@ export function BriefCard({ brief }: { brief: Brief }) {
         </div>
       </div>
 
+      <p className="text-xs text-muted-foreground leading-relaxed pt-1">
+        Patient-completed summary, organised with reference to NICE guideline NG23. Not clinically verified.
+        {" "}Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
+      </p>
+
       <Section icon={BookOpen} title="Resources">
         <p className="text-muted-foreground">Links and resources will be added here soon.</p>
       </Section>
