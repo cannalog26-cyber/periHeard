@@ -201,7 +201,17 @@ function Index() {
       {!isEmpty && (
         <div className="sticky bottom-0 border-t border-border/60 bg-background/90 backdrop-blur">
           <div className="max-w-3xl mx-auto px-5 py-4">
-            {chatInput}
+            {inputOpen ? (
+              chatInput
+            ) : (
+              <button
+                onClick={() => setInputOpen(true)}
+                className="w-full inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+              >
+                Update Brief
+                <ArrowUp className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
       )}
