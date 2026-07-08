@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, LayoutDashboard, RotateCcw, Sparkles, Stethoscope, UserCircle2 } from "lucide-react";
+import { ArrowUp, RotateCcw, Sparkles, Stethoscope, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
-import { addToVault } from "@/lib/use-vault";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 
 export const Route = createFileRoute("/")({
