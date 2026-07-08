@@ -88,7 +88,9 @@ export function briefToPrintableHtml(brief: Brief): string {
   }
   .page { max-width: 720px; margin: 0 auto; padding: 24px; }
   header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d6d1c4; padding-bottom: 8px; margin-bottom: 18px; }
-  header h1 { font-family: Georgia, "Times New Roman", serif; font-size: 18pt; margin: 0; color: #1f3d33; }
+  header h1 { font-family: Georgia, "Times New Roman", serif; font-size: 20pt; margin: 0; color: #1f3d33; letter-spacing: -0.01em; }
+  header h1 .mark-p { color: #7a1f1f; }
+  header .subtitle { font-size: 10pt; color: #4a4a4a; margin-top: 2px; }
   header .meta { font-size: 9pt; color: #6b6f6a; }
   h2 { font-size: 10pt; text-transform: uppercase; letter-spacing: 0.08em; color: #1f3d33; margin: 0 0 8px; border-bottom: 1px solid #e5e0d2; padding-bottom: 4px; }
   .section { margin: 14px 0; break-inside: avoid; page-break-inside: avoid; }
@@ -118,7 +120,10 @@ export function briefToPrintableHtml(brief: Brief): string {
 </div>
 <div class="page">
   <header>
-    <h1>Appointment brief</h1>
+    <div>
+      <h1><span class="mark-p">peri</span>Heard</h1>
+      <div class="subtitle">Appointment brief</div>
+    </div>
     <div class="meta">Prepared ${esc(dateStr)}</div>
   </header>
   ${parts.join("\n")}
@@ -157,7 +162,7 @@ export async function saveBriefAsPdf(brief: Brief) {
     await html2pdf()
       .set({
         margin: [10, 10, 10, 10],
-        filename: `appointment-brief-${dateStr}.pdf`,
+        filename: `periHeard-brief.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
