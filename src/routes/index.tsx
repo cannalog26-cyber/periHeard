@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, UserCircle2, Users } from "lucide-react";
+import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2, Users } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
@@ -73,8 +73,48 @@ function Index() {
 
   const isEmpty = hydrated && turns.length === 0;
 
+  const chatInput = (
+    <>
+      <div className="rounded-2xl border border-input-card-border bg-input-card shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all">
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={
+            turns.length === 0
+              ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
+              : "Add more detail, correct something, or ask a follow-up…"
+          }
+          rows={4}
+          className="w-full bg-transparent resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none"
+        />
+        <div className="flex items-center justify-between gap-3 px-3 pb-3">
+          <VoiceRecorder
+            disabled={loading}
+            onTranscript={(t) => {
+              setInput((prev) => (prev ? prev + " " + t : t));
+              textareaRef.current?.focus();
+            }}
+          />
+          <button
+            onClick={submit}
+            disabled={!input.trim() || loading}
+            className="inline-flex items-center gap-1.5 h-10 px-5 rounded-full bg-cta text-cta-foreground text-sm font-semibold hover:bg-cta/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+          >
+            {turns.length === 0 ? "Build my brief" : "Update brief"}
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+      <p className="text-[11px] text-foreground/75 text-center mt-2">
+        Not a diagnostic tool. Nothing you type leaves your browser except to build the brief.
+      </p>
+    </>
+  );
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background-bottom">
       <Toaster position="top-center" richColors />
       <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
@@ -89,9 +129,9 @@ function Index() {
           <div className="flex items-center gap-1">
             <Link
               to="/community"
-              className="inline-flex items-center gap-2 text-sm font-medium text-foreground px-4 py-2 rounded-full border border-border bg-card hover:bg-muted hover:border-primary/30 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 text-sm font-medium text-secondary px-4 py-2 rounded-full border border-border bg-card hover:bg-muted hover:text-foreground transition-colors shadow-sm"
             >
-              <Users className="h-4 w-4 text-primary" />
+              <Users className="h-4 w-4 text-secondary" />
               Community
             </Link>
             {turns.length > 0 && (
@@ -124,9 +164,13 @@ function Index() {
       </header>
 
       <main className="flex-1 w-full">
-        <div className="max-w-3xl mx-auto px-5 py-8 space-y-6">
-          {isEmpty && (
-            <section className="text-center py-8 space-y-4">
+        {isEmpty ? (
+          <div className="max-w-3xl mx-auto px-5 py-8 min-h-full flex flex-col items-center justify-center gap-4">
+            <section className="text-center space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-xs text-secondary">
+                <Sparkles className="h-3 w-3 text-secondary" />
+                Focused on perimenopause
+              </div>
               <h2 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-foreground">
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
               </h2>
@@ -137,79 +181,52 @@ function Index() {
                 you prepare what to say if you feel your concerns aren't being heard.
               </p>
             </section>
-          )}
-
-          {turns.map((t) =>
-            t.role === "user" ? (
-              <div key={t.id} className="flex gap-3 items-start">
-                <div className="h-8 w-8 rounded-full bg-muted grid place-items-center shrink-0 mt-0.5">
-                  <UserCircle2 className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="flex-1 rounded-2xl rounded-tl-sm bg-muted/50 border border-border/50 px-4 py-3">
-                  <p className="text-[15px] whitespace-pre-wrap leading-relaxed">{t.text}</p>
-                </div>
-              </div>
-            ) : (
-              <div key={t.id}>
-                <BriefCard brief={t.brief} />
-              </div>
-            ),
-          )}
-
-          {loading && (
-            <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-3">
-              <div className="flex gap-1">
-                <span className="h-2 w-2 rounded-full bg-accent animate-bounce [animation-delay:-0.3s]" />
-                <span className="h-2 w-2 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
-                <span className="h-2 w-2 rounded-full bg-accent animate-bounce" />
-              </div>
-              <span className="text-sm text-muted-foreground">Building your brief…</span>
-            </div>
-          )}
-
-          <div ref={bottomRef} />
-        </div>
-      </main>
-
-      <div className="sticky bottom-0 border-t border-border/60 bg-background/90 backdrop-blur">
-        <div className="max-w-3xl mx-auto px-5 py-4">
-          <div className="rounded-2xl border border-border bg-card shadow-sm focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={onKeyDown}
-              placeholder={
-                turns.length === 0
-                  ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
-                  : "Add more detail, correct something, or ask a follow-up…"
-              }
-              rows={4}
-              className="w-full bg-transparent resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-muted-foreground/70 focus:outline-none"
-            />
-            <div className="flex items-center justify-between gap-3 px-3 pb-3">
-              <VoiceRecorder
-                disabled={loading}
-                onTranscript={(t) => {
-                  setInput((prev) => (prev ? prev + " " + t : t));
-                  textareaRef.current?.focus();
-                }}
-              />
-              <button
-                onClick={submit}
-                disabled={!input.trim() || loading}
-                className="inline-flex items-center gap-1.5 h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
-              >
-                {turns.length === 0 ? "Build my brief" : "Update brief"}
-                <ArrowUp className="h-4 w-4" />
-              </button>
+            <div className="w-full">
+              {chatInput}
             </div>
           </div>
-          <p className="text-[11px] text-muted-foreground text-center mt-2">
-            Not a diagnostic tool. Nothing you type leaves your browser except to build the brief.
-          </p>
+        ) : (
+          <div className="max-w-3xl mx-auto px-5 py-8 space-y-6">
+            {turns.map((t) =>
+              t.role === "user" ? (
+                <div key={t.id} className="flex gap-3 items-start">
+                  <div className="h-8 w-8 rounded-full bg-muted grid place-items-center shrink-0 mt-0.5">
+                    <UserCircle2 className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 rounded-2xl rounded-tl-sm bg-muted/50 border border-border/50 px-4 py-3">
+                    <p className="text-[15px] whitespace-pre-wrap leading-relaxed">{t.text}</p>
+                  </div>
+                </div>
+              ) : (
+                <div key={t.id}>
+                  <BriefCard brief={t.brief} />
+                </div>
+              ),
+            )}
+
+            {loading && (
+              <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-3">
+                <div className="flex gap-1">
+                  <span className="h-2 w-2 rounded-full bg-accent animate-bounce [animation-delay:-0.3s]" />
+                  <span className="h-2 w-2 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
+                  <span className="h-2 w-2 rounded-full bg-accent animate-bounce" />
+                </div>
+                <span className="text-sm text-muted-foreground">Building your brief…</span>
+              </div>
+            )}
+
+            <div ref={bottomRef} />
+          </div>
+        )}
+      </main>
+
+      {!isEmpty && (
+        <div className="sticky bottom-0 border-t border-border/60 bg-background/90 backdrop-blur">
+          <div className="max-w-3xl mx-auto px-5 py-4">
+            {chatInput}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
