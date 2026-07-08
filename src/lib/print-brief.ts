@@ -133,6 +133,43 @@ export function openBriefForPrint(brief: Brief) {
   openHtml(html);
 }
 
+export async function saveBriefAsPdf(brief: Brief) {
+  const html = briefToPrintableHtml(brief);
+  const container = document.createElement("div");
+  container.innerHTML = html;
+  // Extract just the .page element for rendering
+  const page = container.querySelector(".page") as HTMLElement | null;
+  const styleEl = container.querySelector("style");
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.left = "-10000px";
+  wrapper.style.top = "0";
+  wrapper.style.width = "800px";
+  wrapper.style.background = "#fff";
+  if (styleEl) wrapper.appendChild(styleEl.cloneNode(true));
+  if (page) wrapper.appendChild(page.cloneNode(true));
+  document.body.appendChild(wrapper);
+
+  const dateStr = new Date().toISOString().slice(0, 10);
+  try {
+    const mod = await import("html2pdf.js");
+    const html2pdf = (mod as any).default ?? (mod as any);
+    await html2pdf()
+      .set({
+        margin: [10, 10, 10, 10],
+        filename: `appointment-brief-${dateStr}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] },
+      })
+      .from(wrapper)
+      .save();
+  } finally {
+    document.body.removeChild(wrapper);
+  }
+}
+
 function openHtml(html: string) {
   const w = window.open("", "_blank", "width=900,height=1000");
   if (!w) {
