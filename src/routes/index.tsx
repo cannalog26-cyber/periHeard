@@ -1,13 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
-import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2, Users } from "lucide-react";
+import { ArrowUp, Download, RotateCcw, Sparkles, UserCircle2 } from "lucide-react";
 import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
-import logoAsset from "@/assets/periHeard-logo.png.asset.json";
+import { Header } from "@/components/Header";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -116,52 +116,35 @@ function Index() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background-bottom">
       <Toaster position="top-center" richColors />
-      <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center">
-            <img
-              src={logoAsset.url}
-              alt="PeriHeard"
-              className="h-9 w-auto"
-            />
-            <h1 className="sr-only">PeriHeard</h1>
-          </div>
-          <div className="flex items-center gap-1">
-            <Link
-              to="/community"
-              className="inline-flex items-center gap-2 text-sm font-medium text-secondary px-4 py-2 rounded-full border border-border bg-card hover:bg-muted hover:text-foreground transition-colors shadow-sm"
-            >
-              <Users className="h-4 w-4 text-secondary" />
-              Community
-            </Link>
-            {turns.length > 0 && (
+      <Header
+        actions={
+          turns.length > 0 ? (
             <>
-            <button
-              onClick={() => {
-                void saveConversationAsPdf(turns);
-              }}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Save conversation
-            </button>
-            <button
-              onClick={() => {
-                if (confirm("Start a new conversation? Your current brief will be cleared.")) {
-                  reset();
-                  setTimeout(() => textareaRef.current?.focus(), 50);
-                }
-              }}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              New conversation
-            </button>
+              <button
+                onClick={() => {
+                  void saveConversationAsPdf(turns);
+                }}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Save conversation
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm("Start a new conversation? Your current brief will be cleared.")) {
+                    reset();
+                    setTimeout(() => textareaRef.current?.focus(), 50);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-md hover:bg-muted transition-colors"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                New conversation
+              </button>
             </>
-            )}
-          </div>
-        </div>
-      </header>
+          ) : null
+        }
+      />
 
       <main className="flex-1 w-full">
         {isEmpty ? (
