@@ -37,7 +37,6 @@ export type GapAnswers = {
   menstrual?: { chips: string[]; note?: string };
   sleep?: "fine" | "disturbed" | "very_poor";
   genitourinary?: "yes" | "no" | "prefer_not";
-  already_tried?: string;
   goal?: string[];
 };
 
