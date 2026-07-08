@@ -4,7 +4,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 126 28"
-      className={cn("block h-9 w-auto", className)}
+      className={cn("block h-9 w-auto overflow-visible", className)}
       aria-label="PeriHeard"
       role="img"
       overflow="visible"
