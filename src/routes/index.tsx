@@ -220,7 +220,7 @@ function Index() {
         <div className="sticky bottom-0 border-t border-border/60 bg-background/90 backdrop-blur">
           <div className="max-w-3xl mx-auto px-5 py-4">
             {inputOpen ? (
-              chatInput
+              chatInput()
             ) : (
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
