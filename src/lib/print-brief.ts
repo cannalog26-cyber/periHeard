@@ -1,4 +1,4 @@
-import type { Brief } from "./brief-types";
+import type { Brief, ChatTurn } from "./brief-types";
 
 function esc(s: string): string {
   return s
@@ -158,6 +158,130 @@ export async function saveBriefAsPdf(brief: Brief) {
       .set({
         margin: [10, 10, 10, 10],
         filename: `appointment-brief-${dateStr}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] },
+      })
+      .from(wrapper)
+      .save();
+  } finally {
+    document.body.removeChild(wrapper);
+  }
+}
+
+function briefToInnerHtml(brief: Brief): string {
+  // Reuse the section-builder logic by extracting the parts (without the doc wrapper).
+  const html = briefToPrintableHtml(brief);
+  const match = html.match(/<div class="page">([\s\S]*?)<\/div>\s*<script/);
+  if (!match) return "";
+  // Strip header/footer — we'll add our own per turn.
+  return match[1]
+    .replace(/<header>[\s\S]*?<\/header>/, "")
+    .replace(/<footer>[\s\S]*?<\/footer>/, "");
+}
+
+function conversationToPrintableHtml(turns: ChatTurn[]): string {
+  const dateStr = new Date().toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const blocks: string[] = [];
+  let userIdx = 0;
+  let briefIdx = 0;
+  for (const t of turns) {
+    if (t.role === "user") {
+      userIdx += 1;
+      blocks.push(
+        `<section class="turn user"><div class="turn-label">You said · message ${userIdx}</div><p>${escapeHtml(
+          t.text,
+        )}</p></section>`,
+      );
+    } else if (t.brief) {
+      briefIdx += 1;
+      blocks.push(
+        `<section class="turn assistant"><div class="turn-label">Brief · version ${briefIdx}</div>${briefToInnerHtml(
+          t.brief,
+        )}</section>`,
+      );
+    }
+  }
+
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<title>Conversation brief — ${dateStr}</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: #1f2b26; font-size: 11pt; line-height: 1.5; background: #fff; }
+  .page { max-width: 720px; margin: 0 auto; padding: 24px; }
+  header.doc { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d6d1c4; padding-bottom: 8px; margin-bottom: 18px; }
+  header.doc h1 { font-family: Georgia, serif; font-size: 18pt; margin: 0; color: #1f3d33; }
+  header.doc .meta { font-size: 9pt; color: #6b6f6a; }
+  h2 { font-size: 10pt; text-transform: uppercase; letter-spacing: 0.08em; color: #1f3d33; margin: 0 0 8px; border-bottom: 1px solid #e5e0d2; padding-bottom: 4px; }
+  .section { margin: 12px 0; break-inside: avoid; page-break-inside: avoid; }
+  .banner { background: #fbecea; border: 1.5px solid #c94a3b; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; color: #6f1f17; }
+  .opener { background: #f0efe6; border-left: 4px solid #b6693d; padding: 12px 14px; border-radius: 4px; margin-bottom: 12px; break-inside: avoid; }
+  .opener .label { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.1em; color: #1f3d33; margin-bottom: 6px; }
+  .opener blockquote { font-family: Georgia, serif; font-size: 13pt; margin: 0; line-height: 1.35; }
+  ul, ol { margin: 0; padding-left: 20px; }
+  li { margin: 4px 0; }
+  ul.clusters { list-style: none; padding: 0; }
+  ul.clusters li { border-left: 2px solid #b6693d; padding: 2px 0 6px 10px; margin: 8px 0; }
+  ul.quotes li { font-style: italic; background: #f5f2e9; padding: 6px 10px; border-radius: 4px; margin: 6px 0; list-style: none; }
+  ul.quotes { padding-left: 0; }
+  .cluster { font-weight: 600; }
+  .dim { color: #6b6f6a; font-size: 9.5pt; }
+  .urgent h2 { color: #6f1f17; border-color: #c94a3b; }
+  .turn { margin: 20px 0; padding-top: 12px; border-top: 1px dashed #d6d1c4; break-inside: avoid; }
+  .turn:first-of-type { border-top: 0; padding-top: 0; }
+  .turn-label { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.1em; color: #6b6f6a; margin-bottom: 8px; }
+  .turn.user p { white-space: pre-wrap; background: #f5f2e9; padding: 10px 12px; border-radius: 6px; margin: 0; }
+  footer.doc { margin-top: 24px; padding-top: 8px; border-top: 1px solid #d6d1c4; font-size: 9pt; color: #6b6f6a; font-style: italic; }
+</style>
+</head><body>
+<div class="page">
+  <header class="doc">
+    <h1>Conversation brief</h1>
+    <div class="meta">Prepared ${escapeHtml(dateStr)}</div>
+  </header>
+  ${blocks.join("\n")}
+  <footer class="doc">This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.</footer>
+</div>
+</body></html>`;
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+export async function saveConversationAsPdf(turns: ChatTurn[]) {
+  if (!turns.length) return;
+  const html = conversationToPrintableHtml(turns);
+  const container = document.createElement("div");
+  container.innerHTML = html;
+  const page = container.querySelector(".page") as HTMLElement | null;
+  const styleEl = container.querySelector("style");
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.left = "-10000px";
+  wrapper.style.top = "0";
+  wrapper.style.width = "800px";
+  wrapper.style.background = "#fff";
+  if (styleEl) wrapper.appendChild(styleEl.cloneNode(true));
+  if (page) wrapper.appendChild(page.cloneNode(true));
+  document.body.appendChild(wrapper);
+
+  const dateStr = new Date().toISOString().slice(0, 10);
+  try {
+    const mod = await import("html2pdf.js");
+    const html2pdf = (mod as any).default ?? (mod as any);
+    await html2pdf()
+      .set({
+        margin: [10, 10, 10, 10],
+        filename: `conversation-brief-${dateStr}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
