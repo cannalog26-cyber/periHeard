@@ -110,7 +110,7 @@ function Index() {
         </div>
       </div>
       <p className="text-[11px] text-foreground/75 text-center mt-2">
-        Not a diagnostic tool. Nothing you type leaves your browser except to build the brief.
+        This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.
       </p>
     </>
   );
