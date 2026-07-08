@@ -1,4 +1,4 @@
-import type { Brief, ClinicalBrief } from "./brief-types";
+import type { Brief } from "./brief-types";
 
 function esc(s: string): string {
   return s

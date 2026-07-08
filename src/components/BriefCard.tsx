@@ -14,7 +14,7 @@ import {
   Printer,
 } from "lucide-react";
 import { useState } from "react";
-import { openBriefForPrint, openClinicalBriefForPrint } from "@/lib/print-brief";
+import { openBriefForPrint } from "@/lib/print-brief";
 
 function Section({
   icon: Icon,
