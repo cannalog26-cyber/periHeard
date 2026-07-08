@@ -8,6 +8,7 @@ import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
 import type { Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -78,9 +79,16 @@ function Index() {
     (t): t is ChatTurn & { brief: Brief } => t.role === "assistant" && !!t.brief,
   )?.brief;
 
-  const chatInput = (
+  const chatInput = (expanded = false) => (
     <>
-      <div className="rounded-2xl border border-input-card-border bg-input-card shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all">
+      <div
+        className={cn(
+          "rounded-2xl border border-input-card-border shadow-sm focus-within:border-secondary/50 focus-within:ring-2 focus-within:ring-secondary/30 transition-all overflow-hidden",
+          expanded
+            ? "flex-1 flex flex-col bg-gradient-to-b from-background to-background-bottom"
+            : "bg-input-card",
+        )}
+      >
         <textarea
           ref={textareaRef}
           value={input}
@@ -91,8 +99,11 @@ function Index() {
               ? "Describe what you've been experiencing — how long, how often, what it stops you doing. Ramble if you need to."
               : "Add more detail, correct something, or ask a follow-up…"
           }
-          rows={6}
-          className="w-full bg-transparent resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none"
+          rows={expanded ? 1 : 6}
+          className={cn(
+            "w-full resize-none px-4 py-3 text-[15px] leading-relaxed placeholder:text-foreground/75 focus:outline-none",
+            expanded ? "flex-1" : "bg-transparent",
+          )}
         />
         <div className="flex items-center justify-between gap-3 px-3 pb-3">
           <VoiceRecorder
@@ -155,9 +166,9 @@ function Index() {
         }
       />
 
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full flex flex-col">
         {isEmpty ? (
-          <div className="max-w-3xl mx-auto px-5 py-8 min-h-full flex flex-col items-center justify-center gap-4">
+          <div className="max-w-3xl mx-auto px-5 py-8 flex-1 flex flex-col items-center gap-4">
             <section className="text-center space-y-4">
               <h2 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight leading-tight text-foreground">
                 Turn your symptoms into a brief your&nbsp;GP will actually&nbsp;act&nbsp;on.
@@ -166,8 +177,8 @@ function Index() {
                 1 in 5 women say they've been brushed off. We built periHeard so everyone walks in prepared, and walks out heard.
               </p>
             </section>
-            <div className="w-full">
-              {chatInput}
+            <div className="w-full flex-1 flex flex-col">
+              {chatInput(true)}
             </div>
           </div>
         ) : (
@@ -209,7 +220,7 @@ function Index() {
         <div className="sticky bottom-0 border-t border-border/60 bg-background/90 backdrop-blur">
           <div className="max-w-3xl mx-auto px-5 py-4">
             {inputOpen ? (
-              chatInput
+              chatInput()
             ) : (
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
