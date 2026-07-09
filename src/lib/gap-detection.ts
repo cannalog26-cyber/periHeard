@@ -35,6 +35,10 @@ export function extractAge(text: string): number | undefined {
     /\b(\d{2})\s*(?:yrs?|years?)\s*old\b/i,
     /\b(\d{2})\s*[- ]?year[- ]?old\b/i,
     /\b(\d{2})\s*yo\b/i,
+    /\b(\d{2})\s*[fF]\b/,
+    /\b(?:i\s+(?:just\s+)?turned|turning)\s+(\d{2})\b/i,
+    /\b(\d{2})\s*(?:th)?\s+birthday\b/i,
+    /^\s*(\d{2})\s*(?=[,.\-;:\s])/,
   ];
   for (const re of patterns) {
     const m = t.match(re);
