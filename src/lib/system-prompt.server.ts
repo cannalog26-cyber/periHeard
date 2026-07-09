@@ -58,7 +58,7 @@ Always populate if_dismissed with 3–4 graduated, polite, effective responses t
 OUTPUT FORMAT
 Respond with ONLY valid JSON, no markdown fences, no preamble. You must ALWAYS produce BOTH the patient-facing brief AND a separate clinical brief in the same response (unless you're returning clarifying_questions or out_of_scope). Schema:
 {
-  "urgent_banner": null or string (only if red flags present),
+  "urgent_banner": null,
   "one_line_summary": string,
   "symptom_summary": [{ "cluster": string, "detail": string, "duration_pattern": string }],  // cluster names should be plain English (e.g. "Memory and thinking", "Vaginal and urinary") - never clinical terms like "Cognitive" or "Genitourinary"
   "timeline": string,  // empty "" when all symptoms share one duration and there is no progression to describe; see DURATION AND TIMELINE rules
