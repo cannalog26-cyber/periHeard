@@ -38,14 +38,38 @@ function Resources() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <a
-              href="https://balance-app.com"
+              href="https://www.nice.org.uk/guidance/ng23"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
             >
-              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">Balance app</h2>
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">NICE NG23</h2>
               <p className="text-[15px] text-muted-foreground leading-relaxed">
-                Track symptoms, find menopause specialists and access evidence-based information.
+                National guideline on the diagnosis and management of menopause.
+              </p>
+            </a>
+
+            <a
+              href="https://www.womens-health-concern.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
+            >
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">Women's Health Concern</h2>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Patient information and support for women's health issues, including menopause.
+              </p>
+            </a>
+
+            <a
+              href="https://balance-menopause.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
+            >
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">Balance Menopause</h2>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Menopause information, symptom tracking and access to specialist care.
               </p>
             </a>
 
@@ -58,6 +82,18 @@ function Resources() {
               <h2 className="font-serif text-xl font-semibold text-foreground mb-2">The Menopause Charity</h2>
               <p className="text-[15px] text-muted-foreground leading-relaxed">
                 Education, support and workplace resources for anyone going through menopause.
+              </p>
+            </a>
+
+            <a
+              href="https://balance-app.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-5 hover:bg-muted/50 transition-colors"
+            >
+              <h2 className="font-serif text-xl font-semibold text-foreground mb-2">Balance app</h2>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Track symptoms, find menopause specialists and access evidence-based information.
               </p>
             </a>
 

@@ -313,7 +313,48 @@ export function BriefCard({ brief }: { brief: Brief }) {
       </p>
 
       <Section icon={BookOpen} title="Resources">
-        <p className="text-muted-foreground">Links and resources will be added here soon.</p>
+        <ul className="space-y-2 text-[15px] text-muted-foreground">
+          <li>
+            <a
+              href="https://www.nice.org.uk/guidance/ng23"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground"
+            >
+              NICE NG23 — Menopause: diagnosis and management
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.womens-health-concern.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground"
+            >
+              Women's Health Concern
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://balance-menopause.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground"
+            >
+              Balance Menopause
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://themenopausecharity.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground"
+            >
+              The Menopause Charity
+            </a>
+          </li>
+        </ul>
       </Section>
     </div>
   );
