@@ -120,6 +120,7 @@ export const Route = createFileRoute("/api/chat")({
         // Red flags are shown exclusively in the dedicated red_flags section.
         if (brief && typeof brief === "object") {
           (brief as { urgent_banner?: unknown }).urgent_banner = null;
+          stripJargon(brief as Record<string, unknown>);
         }
 
         return new Response(JSON.stringify({ brief }), {
@@ -129,3 +130,105 @@ export const Route = createFileRoute("/api/chat")({
     },
   },
 });
+
+// Replace medical jargon with plain-English equivalents in every
+// patient-facing string field. The "clinical" object is left untouched
+// because it is authored for the GP (and not currently rendered anyway).
+const JARGON_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/\bamenorrhoea\b/gi, "no periods"],
+  [/\bamenorrhea\b/gi, "no periods"],
+  [/\boligomenorrhoea\b/gi, "infrequent periods"],
+  [/\boligomenorrhea\b/gi, "infrequent periods"],
+  [/\bmenorrhagia\b/gi, "very heavy periods"],
+  [/\bdysmenorrhoea\b/gi, "painful periods"],
+  [/\bdysmenorrhea\b/gi, "painful periods"],
+  [/\bdyspareunia\b/gi, "pain during sex"],
+  [/\bvasomotor(?:\s+sx)?\s+symptoms?\b/gi, "hot flushes and night sweats"],
+  [/\bvasomotor\s+sx\b/gi, "hot flushes and night sweats"],
+  [/\bvasomotor\b/gi, "hot flushes and night sweats"],
+  [/\bgenitourinary syndrome of menopause\b/gi, "vaginal dryness and urinary symptoms"],
+  [/\bGSM\b/g, "vaginal dryness and urinary symptoms"],
+  [/\bHSDD\b/g, "low sex drive"],
+  [/\bvaginal atrophy\b/gi, "vaginal dryness"],
+  [/\btransdermal\s+(?:E2|oestradiol|estradiol)\b/gi, "hormone patch or gel"],
+  [/\bmicronised progesterone\b/gi, "progesterone (a hormone tablet)"],
+  [/\bmicronized progesterone\b/gi, "progesterone (a hormone tablet)"],
+  [/\boestradiol\b/gi, "oestrogen"],
+  [/\bestradiol\b/gi, "oestrogen"],
+  [/\bTFTs?\b/g, "thyroid blood test"],
+  [/\bFBC\b/g, "full blood count (a blood test)"],
+  [/\bU&Es\b/g, "kidney blood test"],
+  [/\bLFTs\b/g, "liver blood test"],
+  [/\bHbA1c\b/g, "blood sugar test"],
+  [/\bferritin\b/gi, "iron level"],
+  [/\bPMH\b/g, "past medical history"],
+  [/\bDHx\b/g, "medication history"],
+  [/\bHPC\b/g, "history of the problem"],
+  [/\bPC\b/g, "main concern"],
+  [/\bsx\b/g, "symptoms"],
+  [/\bhx\b/g, "history"],
+  [/\bdx\b/g, "diagnosis"],
+  [/\btx\b/g, "treatment"],
+  [/\brx\b/g, "prescription"],
+  [/\bx\/12\b/g, "months"],
+  [/\bx\/52\b/g, "weeks"],
+  [/\bcognitive symptoms?\b/gi, "brain fog and memory problems"],
+  [/\bpsychological symptoms?\b/gi, "mood changes"],
+  [/\bmusculoskeletal\b/gi, "joint and muscle"],
+  [/\bgenitourinary\b/gi, "vaginal and urinary"],
+  [/\baetiolog(?:y|ies|ical)\b/gi, "cause"],
+  [/\bdifferentials?\b/gi, "other possible causes"],
+  [/\bpresenting complaint\b/gi, "main concern"],
+  [/\bonset pattern\b/gi, "when it started"],
+  [/\bclinically indicated\b/gi, "needed"],
+  [/\bPOI\b/g, "early menopause"],
+];
+
+function scrub(text: string): string {
+  let out = text;
+  for (const [re, rep] of JARGON_REPLACEMENTS) out = out.replace(re, rep);
+  return out;
+}
+
+const PATIENT_FIELDS = new Set([
+  "one_line_summary",
+  "timeline",
+  "impact_statement",
+  "what_to_expect",
+  "disclaimer",
+  "out_of_scope",
+]);
+const PATIENT_ARRAYS = new Set([
+  "already_tried",
+  "questions_to_ask",
+  "if_dismissed",
+  "red_flags",
+  "bring_with_you",
+  "clarifying_questions",
+]);
+
+function stripJargon(brief: Record<string, unknown>) {
+  for (const k of Object.keys(brief)) {
+    if (k === "clinical") continue;
+    const v = brief[k];
+    if (typeof v === "string" && PATIENT_FIELDS.has(k)) {
+      brief[k] = scrub(v);
+    } else if (Array.isArray(v) && PATIENT_ARRAYS.has(k)) {
+      brief[k] = v.map((item) => (typeof item === "string" ? scrub(item) : item));
+    } else if (k === "symptom_summary" && Array.isArray(v)) {
+      brief[k] = v.map((item) => {
+        if (item && typeof item === "object") {
+          const o = item as Record<string, unknown>;
+          return {
+            ...o,
+            cluster: typeof o.cluster === "string" ? scrub(o.cluster) : o.cluster,
+            detail: typeof o.detail === "string" ? scrub(o.detail) : o.detail,
+            duration_pattern:
+              typeof o.duration_pattern === "string" ? scrub(o.duration_pattern) : o.duration_pattern,
+          };
+        }
+        return item;
+      });
+    }
+  }
+}
