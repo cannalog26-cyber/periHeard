@@ -313,12 +313,6 @@ export async function saveBriefAsPdf(brief: Brief) {
       writeLines(brief.impact_statement);
     }
 
-    if (brief.already_tried?.length) {
-      heading("Already tried");
-      for (const x of brief.already_tried)
-        writeLines(`• ${x}`, { indent: 2, gap: 0.3 });
-    }
-
     if (brief.questions_to_ask?.length) {
       heading("Questions to ask");
       brief.questions_to_ask.forEach((q, i) =>
