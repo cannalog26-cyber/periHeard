@@ -5,6 +5,7 @@ import {
   type GapQuestionId,
   MENSTRUAL_CHIPS,
   GOAL_CHIPS,
+  extractAge,
 } from "@/lib/gap-detection";
 import type { AgeBand } from "@/lib/brief-types";
 import { cn } from "@/lib/utils";
@@ -69,7 +70,10 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
     });
   };
 
-  const requiresAge = questions.includes("age");
+  // If the user typed their age into the menstrual note (the only free-text
+  // field in this panel), respect that and drop the age requirement.
+  const notedAge = extractAge(answers.menstrual?.note ?? "");
+  const requiresAge = questions.includes("age") && notedAge === undefined;
   const canSubmit = !requiresAge || !!answers.age;
 
   const AGE_BANDS: { value: AgeBand; label: string }[] = [
@@ -89,7 +93,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
         </p>
       </div>
 
-      {questions.includes("age") && (
+      {questions.includes("age") && notedAge === undefined && (
         <div className="space-y-2">
           <label className="block text-[15px] font-medium text-foreground">
             How old are you? <span className="text-secondary">(required)</span>
@@ -217,7 +221,13 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
 
       <div className="flex flex-col sm:flex-row gap-2 pt-2">
         <button
-          onClick={() => onSubmit(answers)}
+          onClick={() =>
+            onSubmit(
+              notedAge !== undefined && answers.ageYears === undefined
+                ? { ...answers, ageYears: notedAge }
+                : answers,
+            )
+          }
           disabled={disabled || !canSubmit}
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-40 transition-all shadow-sm"
         >
