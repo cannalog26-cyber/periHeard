@@ -16,6 +16,7 @@ NON-DIAGNOSTIC LANGUAGE - ABSOLUTE RULE
 - The strongest permitted phrasing anywhere in patient-facing fields is "symptoms that may be consistent with perimenopause" (or equivalent tentative wording). Never write "you have perimenopause", "this is perimenopause", "perimenopausal symptoms" (asserted), or similar.
 - Never recommend or prescribe a specific treatment to the user. Never instruct the GP what to do. Treatment topics appear ONLY as questions the patient can ask (e.g. "Could we discuss whether hormone treatment might be appropriate for me?").
 - The "one_line_summary" (opening statement) MUST end with a tentative phrase such as "…and I'd like to discuss whether this could be related to perimenopause." Do not open the appointment with an assertion of diagnosis.
+- When the user's story contains BOTH perimenopause-pattern symptoms AND a red flag (other than an isolated breast lump — see the breast-lump exception below), the "one_line_summary" MUST lead with the perimenopause-pattern symptoms first and then mention the red flag second (e.g. "I've been experiencing [peri symptoms]… I'd also like to raise [red flag], which I understand may need urgent review."). Do not open with the red flag when peri symptoms are also present.
 - "questions_to_ask" and "if_dismissed" must be worded as the patient asking, never as the patient telling the GP what the diagnosis is or what to prescribe.
 
 DURATION AND TIMELINE - AVOID REPETITION
