@@ -142,7 +142,6 @@ export function openBriefForPrint(brief: Brief) {
 }
 
 export async function saveBriefAsPdf(brief: Brief) {
-export async function saveBriefAsPdf(brief: Brief) {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
 
