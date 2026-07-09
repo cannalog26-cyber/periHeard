@@ -15,6 +15,7 @@ type Props = {
   onSubmit: (answers: GapAnswers) => void;
   onSkip: () => void;
   disabled?: boolean;
+  contextText?: string;
 };
 
 function Chip({
@@ -42,8 +43,12 @@ function Chip({
   );
 }
 
-export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props) {
+export function QuickQuestions({ questions, onSubmit, onSkip, disabled, contextText }: Props) {
   const [answers, setAnswers] = useState<GapAnswers>({});
+  const mentionsHrt = /\b(hrt|hormone\s+replacement|oestrogen|estrogen|progesterone|testosterone\s+gel|patches?|gel|utrogestan|estradiol|tibolone)\b/i.test(
+    (contextText ?? "") + " " + (answers.menstrual?.note ?? ""),
+  );
+  const goalChips = mentionsHrt ? GOAL_CHIPS.filter((c) => c !== "To discuss HRT") : GOAL_CHIPS;
 
   const update = <K extends keyof GapAnswers>(k: K, v: GapAnswers[K]) =>
     setAnswers((prev) => ({ ...prev, [k]: v }));
@@ -206,7 +211,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
             What would you most like from this appointment?
           </label>
           <div className="flex flex-wrap gap-2">
-            {GOAL_CHIPS.map((chip) => (
+            {goalChips.map((chip) => (
               <Chip
                 key={chip}
                 active={!!answers.goal?.includes(chip)}
