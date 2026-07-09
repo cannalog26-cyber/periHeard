@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "Organise your symptoms into a clear, guideline-anchored brief for your GP appointment.",
+          "A clinical communication tool built by UK pharmacist prescribers. Turn your symptom story into a structured GP brief so you're taken seriously in 10 minutes.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
