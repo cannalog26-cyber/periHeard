@@ -17,7 +17,7 @@ import {
   ArrowUp,
 } from "lucide-react";
 import { useState } from "react";
-import { openBriefForPrint, saveBriefAsPdf } from "@/lib/print-brief";
+import { saveBriefAsPdf } from "@/lib/print-brief";
 
 function Section({
   icon: Icon,
