@@ -1,4 +1,27 @@
 import type { Brief, ChatTurn } from "./brief-types";
+import logoAsset from "@/assets/periHeard-logo.png.asset.json";
+
+let logoDataUrlPromise: Promise<string | null> | null = null;
+async function getLogoDataUrl(): Promise<string | null> {
+  if (!logoDataUrlPromise) {
+    logoDataUrlPromise = (async () => {
+      try {
+        const res = await fetch(logoAsset.url);
+        if (!res.ok) return null;
+        const blob = await res.blob();
+        return await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(blob);
+        });
+      } catch {
+        return null;
+      }
+    })();
+  }
+  return logoDataUrlPromise;
+}
 
 function esc(s: string): string {
   return s
@@ -143,164 +166,218 @@ export function openBriefForPrint(brief: Brief) {
 
 export async function saveBriefAsPdf(brief: Brief) {
   const { jsPDF } = await import("jspdf");
-  const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
-
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const marginX = 16;
-  const marginY = 18;
-  const contentW = pageW - marginX * 2;
-  let y = marginY;
+  const logoDataUrl = await getLogoDataUrl();
 
   const dateStr = new Date().toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-
-  const ensureSpace = (needed: number) => {
-    if (y + needed > pageH - marginY) {
-      doc.addPage();
-      y = marginY;
-    }
-  };
-
-  const writeLines = (
-    text: string,
-    opts: { size?: number; style?: "normal" | "bold" | "italic"; color?: [number, number, number]; indent?: number; gap?: number } = {},
-  ) => {
-    const { size = 11, style = "normal", color = [31, 43, 38], indent = 0, gap = 1.5 } = opts;
-    doc.setFont("helvetica", style);
-    doc.setFontSize(size);
-    doc.setTextColor(color[0], color[1], color[2]);
-    const lines = doc.splitTextToSize(text, contentW - indent);
-    const lineH = size * 0.4;
-    for (const line of lines) {
-      ensureSpace(lineH);
-      doc.text(line, marginX + indent, y);
-      y += lineH;
-    }
-    y += gap;
-  };
-
-  const heading = (title: string, urgent = false) => {
-    ensureSpace(10);
-    y += 2;
-    const color: [number, number, number] = urgent ? [111, 31, 23] : [31, 61, 51];
-    doc.setDrawColor(214, 209, 196);
-    doc.line(marginX, y, marginX + contentW, y);
-    y += 5;
-    writeLines(title.toUpperCase(), { size: 10, style: "bold", color, gap: 3 });
-  };
-
-  // Header
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.setTextColor(31, 61, 51);
-  doc.text("periHeard", marginX, y);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(107, 111, 106);
-  doc.text(`Prepared ${dateStr}`, pageW - marginX, y, { align: "right" });
-  y += 4;
-  doc.setFontSize(10);
-  doc.setTextColor(74, 74, 74);
-  doc.text("Appointment brief", marginX, y);
-  y += 4;
-  doc.setDrawColor(214, 209, 196);
-  doc.line(marginX, y, pageW - marginX, y);
-  y += 6;
-
-  if (brief.urgent_banner) {
-    ensureSpace(20);
-    doc.setFillColor(251, 236, 234);
-    doc.setDrawColor(201, 74, 59);
-    const bannerLines = doc.splitTextToSize(`Please read first: ${brief.urgent_banner}`, contentW - 8);
-    const bannerH = bannerLines.length * 4.5 + 6;
-    doc.roundedRect(marginX, y, contentW, bannerH, 2, 2, "FD");
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(111, 31, 23);
-    let by = y + 5;
-    for (const line of bannerLines) {
-      doc.text(line, marginX + 4, by);
-      by += 4.5;
-    }
-    y += bannerH + 4;
-  }
-
-  if (brief.one_line_summary) {
-    heading("Open the appointment with this");
-    writeLines(`"${brief.one_line_summary}"`, { size: 12, style: "italic" });
-  }
-
-  if (brief.symptom_summary?.length) {
-    heading("Symptom summary");
-    for (const s of brief.symptom_summary) {
-      writeLines(s.cluster, { size: 11, style: "bold", gap: 0.5 });
-      const detail = (s.detail ?? "").trim();
-      const duration = (s.duration_pattern ?? "").trim();
-      const detailHasDuration =
-        duration.length > 0 && detail.toLowerCase().includes(duration.toLowerCase());
-      const inline = duration && !detailHasDuration ? `${detail} — ${duration}` : detail;
-      if (inline) writeLines(inline, { size: 11, indent: 4 });
-    }
-  }
-
-  if (brief.timeline) {
-    heading("Timeline");
-    writeLines(brief.timeline);
-  }
-
-  if (brief.impact_statement) {
-    heading("Impact on daily life");
-    writeLines(brief.impact_statement);
-  }
-
-  if (brief.already_tried?.length) {
-    heading("Already tried");
-    for (const x of brief.already_tried) writeLines(`• ${x}`, { indent: 2, gap: 0.5 });
-  }
-
-  if (brief.questions_to_ask?.length) {
-    heading("Questions to ask");
-    brief.questions_to_ask.forEach((q, i) => writeLines(`${i + 1}. ${q}`, { indent: 2, gap: 0.5 }));
-  }
-
-  if (brief.if_dismissed?.length) {
-    heading("If I feel dismissed, I can say");
-    for (const x of brief.if_dismissed) writeLines(`"${x}"`, { style: "italic", indent: 2, gap: 0.5 });
-  }
-
-  if (brief.red_flags?.length) {
-    heading("Red flags — seek prompt review", true);
-    for (const x of brief.red_flags)
-      writeLines(`• ${x}`, { indent: 2, gap: 0.5, color: [111, 31, 23] });
-  }
-
-  if (brief.what_to_expect) {
-    heading("What a good consultation looks like");
-    writeLines(brief.what_to_expect);
-  }
-
-  if (brief.bring_with_you?.length) {
-    heading("Bring with me");
-    for (const x of brief.bring_with_you) writeLines(`• ${x}`, { indent: 2, gap: 0.5 });
-  }
-
-  // Footer disclaimer on last page
   const disclaimer =
     brief.disclaimer ||
     "This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.";
-  y += 4;
-  ensureSpace(14);
-  doc.setDrawColor(214, 209, 196);
-  doc.line(marginX, y, pageW - marginX, y);
-  y += 4;
-  writeLines(disclaimer, { size: 8.5, style: "italic", color: [107, 111, 106] });
-  writeLines(`Generated ${dateStr}.`, { size: 8.5, style: "italic", color: [107, 111, 106] });
 
-  doc.save("periHeard-brief.pdf");
+  // Render the brief onto a doc at a given scale (font & spacing multiplier).
+  // Returns the doc and the final y so we can measure whether it fit one page.
+  const render = (scale: number): { doc: any; overflow: boolean } => {
+    const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const marginX = 14;
+    const marginY = 14;
+    const contentW = pageW - marginX * 2;
+    let y = marginY;
+    let overflow = false;
+
+    // Everything black & white.
+    const BLACK: [number, number, number] = [0, 0, 0];
+    const GREY: [number, number, number] = [90, 90, 90];
+    const RULE: [number, number, number] = [180, 180, 180];
+
+    const writeLines = (
+      text: string,
+      opts: {
+        size?: number;
+        style?: "normal" | "bold" | "italic" | "bolditalic";
+        color?: [number, number, number];
+        indent?: number;
+        gap?: number;
+      } = {},
+    ) => {
+      const size = (opts.size ?? 10) * scale;
+      const style = opts.style ?? "normal";
+      const color = opts.color ?? BLACK;
+      const indent = opts.indent ?? 0;
+      const gap = (opts.gap ?? 1.2) * scale;
+      doc.setFont("helvetica", style);
+      doc.setFontSize(size);
+      doc.setTextColor(color[0], color[1], color[2]);
+      const lines = doc.splitTextToSize(text, contentW - indent);
+      const lineH = size * 0.4;
+      for (const line of lines) {
+        if (y + lineH > pageH - marginY) overflow = true;
+        doc.text(line, marginX + indent, y);
+        y += lineH;
+      }
+      y += gap;
+    };
+
+    const heading = (title: string) => {
+      y += 2 * scale;
+      doc.setDrawColor(RULE[0], RULE[1], RULE[2]);
+      doc.setLineWidth(0.15);
+      doc.line(marginX, y, marginX + contentW, y);
+      y += 3.5 * scale;
+      writeLines(title.toUpperCase(), {
+        size: 8.5,
+        style: "bold",
+        color: BLACK,
+        gap: 1.5,
+      });
+    };
+
+    // Header with logo
+    const headerTop = y;
+    const logoH = 10 * scale;
+    if (logoDataUrl) {
+      try {
+        doc.addImage(logoDataUrl, "PNG", marginX, headerTop - 1, logoH, logoH);
+      } catch {
+        // Ignore image failure; continue with text-only header.
+      }
+    }
+    const titleX = logoDataUrl ? marginX + logoH + 3 : marginX;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16 * scale);
+    doc.setTextColor(0, 0, 0);
+    doc.text("periHeard", titleX, headerTop + 5 * scale);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5 * scale);
+    doc.setTextColor(GREY[0], GREY[1], GREY[2]);
+    doc.text("Appointment brief", titleX, headerTop + 9 * scale);
+    doc.text(`Prepared ${dateStr}`, pageW - marginX, headerTop + 5 * scale, {
+      align: "right",
+    });
+    y = headerTop + logoH + 3 * scale;
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.3);
+    doc.line(marginX, y, pageW - marginX, y);
+    y += 4 * scale;
+
+    if (brief.urgent_banner) {
+      const size = 9.5 * scale;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(size);
+      const lines = doc.splitTextToSize(
+        `PLEASE READ FIRST — ${brief.urgent_banner}`,
+        contentW - 6,
+      );
+      const lineH = size * 0.42;
+      const bannerH = lines.length * lineH + 4 * scale;
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.6);
+      doc.rect(marginX, y, contentW, bannerH);
+      doc.setTextColor(0, 0, 0);
+      let by = y + 3 * scale + lineH * 0.7;
+      for (const line of lines) {
+        doc.text(line, marginX + 3, by);
+        by += lineH;
+      }
+      y += bannerH + 3 * scale;
+    }
+
+    if (brief.one_line_summary) {
+      heading("Open the appointment with this");
+      writeLines(`"${brief.one_line_summary}"`, { size: 11, style: "italic" });
+    }
+
+    if (brief.symptom_summary?.length) {
+      heading("Symptom summary");
+      for (const s of brief.symptom_summary) {
+        writeLines(s.cluster, { size: 10, style: "bold", gap: 0.3 });
+        const detail = (s.detail ?? "").trim();
+        const duration = (s.duration_pattern ?? "").trim();
+        const detailHasDuration =
+          duration.length > 0 && detail.toLowerCase().includes(duration.toLowerCase());
+        const inline =
+          duration && !detailHasDuration ? `${detail} — ${duration}` : detail;
+        if (inline) writeLines(inline, { size: 10, indent: 3, gap: 0.8 });
+      }
+    }
+
+    if (brief.timeline) {
+      heading("Timeline");
+      writeLines(brief.timeline);
+    }
+
+    if (brief.impact_statement) {
+      heading("Impact on daily life");
+      writeLines(brief.impact_statement);
+    }
+
+    if (brief.already_tried?.length) {
+      heading("Already tried");
+      for (const x of brief.already_tried)
+        writeLines(`• ${x}`, { indent: 2, gap: 0.3 });
+    }
+
+    if (brief.questions_to_ask?.length) {
+      heading("Questions to ask");
+      brief.questions_to_ask.forEach((q, i) =>
+        writeLines(`${i + 1}. ${q}`, { indent: 2, gap: 0.4 }),
+      );
+    }
+
+    if (brief.if_dismissed?.length) {
+      heading("If I feel dismissed, I can say");
+      for (const x of brief.if_dismissed)
+        writeLines(`"${x}"`, { style: "italic", indent: 2, gap: 0.4 });
+    }
+
+    if (brief.red_flags?.length) {
+      heading("Red flags — seek prompt review");
+      for (const x of brief.red_flags)
+        writeLines(`• ${x}`, { indent: 2, gap: 0.3, style: "bold" });
+    }
+
+    if (brief.what_to_expect) {
+      heading("What a good consultation looks like");
+      writeLines(brief.what_to_expect);
+    }
+
+    if (brief.bring_with_you?.length) {
+      heading("Bring with me");
+      for (const x of brief.bring_with_you)
+        writeLines(`• ${x}`, { indent: 2, gap: 0.3 });
+    }
+
+    // Footer
+    y += 2 * scale;
+    doc.setDrawColor(RULE[0], RULE[1], RULE[2]);
+    doc.setLineWidth(0.15);
+    doc.line(marginX, y, pageW - marginX, y);
+    y += 3 * scale;
+    writeLines(disclaimer, { size: 7.5, style: "italic", color: GREY, gap: 0.4 });
+    writeLines(`Generated ${dateStr}.`, {
+      size: 7.5,
+      style: "italic",
+      color: GREY,
+      gap: 0,
+    });
+
+    if (y > pageH - marginY / 2) overflow = true;
+    return { doc, overflow };
+  };
+
+  // Iteratively shrink until it fits on a single page.
+  let scale = 1;
+  let result = render(scale);
+  while (result.overflow && scale > 0.55) {
+    scale -= 0.05;
+    result = render(scale);
+  }
+
+  result.doc.save("periHeard-brief.pdf");
 }
 
 function briefToInnerHtml(brief: Brief): string {
