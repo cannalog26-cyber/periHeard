@@ -30,6 +30,30 @@ async function translateToEnglish(key: string, text: string, sourceLang: string)
   return data.choices?.[0]?.message?.content?.trim() ?? null;
 }
 
+async function rewriteToFirstPerson(key: string, text: string) {
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You rewrite a dictated symptom description so the speaker is always in the first person (\"I\", \"me\", \"my\"). If the transcript refers to the speaker in the third person (\"she\", \"he\", \"her\", \"his\", \"the patient\", \"[Name] has…\"), convert those references to first person. Preserve every symptom, timeline, medication, dose, wording and emotional nuance exactly - do NOT summarise, translate, reorder, add, or remove content. If the text is already in the first person, return it unchanged. Reply with the rewritten text only - no preamble, no quotes.",
+        },
+        { role: "user", content: text },
+      ],
+    }),
+  });
+  if (!res.ok) return null;
+  const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+  return data.choices?.[0]?.message?.content?.trim() ?? null;
+}
+
 export const Route = createFileRoute("/api/transcribe")({
   server: {
     handlers: {
@@ -83,9 +107,15 @@ export const Route = createFileRoute("/api/transcribe")({
           translated = await translateToEnglish(key, original, language);
         }
 
+        const preFirstPerson = translated ?? original;
+        let firstPerson: string | null = null;
+        if (preFirstPerson) {
+          firstPerson = await rewriteToFirstPerson(key, preFirstPerson);
+        }
+
         return new Response(
           JSON.stringify({
-            text: translated ?? original,
+            text: firstPerson ?? preFirstPerson,
             original,
             translated: translated !== null && translated !== original,
             language,
