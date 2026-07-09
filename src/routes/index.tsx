@@ -12,6 +12,7 @@ import { QuickQuestions } from "@/components/QuickQuestions";
 import {
   detectGaps,
   detectCrisis,
+  extractAge,
   formatAnswersForBrief,
   hasPerimenopausePattern,
   type GapAnswers,
@@ -130,7 +131,14 @@ function Index() {
   }
 
   function handleGapSubmit(answers: GapAnswers) {
-    const years = answers.ageYears;
+    // If the user typed their age in free text, respect that when the age
+    // question was skipped.
+    const inferred = extractAge(pendingText);
+    const years = answers.ageYears ?? inferred;
+    const mergedAnswers: GapAnswers =
+      answers.ageYears === undefined && inferred !== undefined
+        ? { ...answers, ageYears: inferred }
+        : answers;
     // Derive age band from numeric age. Under 30 is excluded from the
     // perimenopause pathway entirely and always gets a general brief.
     let ageBand: AgeBand | undefined;
@@ -147,8 +155,8 @@ function Index() {
     } else {
       ageBand = "45_plus";
     }
-    const combined = pendingText + formatAnswersForBrief(answers);
-    const perimenopausePattern = hasPerimenopausePattern(pendingText, answers);
+    const combined = pendingText + formatAnswersForBrief(mergedAnswers);
+    const perimenopausePattern = hasPerimenopausePattern(pendingText, mergedAnswers);
     setGapQuestions(null);
     if (forceGeneral || !perimenopausePattern) {
       // Don't push a perimenopause-framed brief for an unrelated pattern.
