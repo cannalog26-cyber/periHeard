@@ -3,6 +3,8 @@ import { useState, type ReactNode } from "react";
 import { Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useSession } from "@/lib/use-session";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "Symptom Checker", to: "/" },
@@ -13,6 +15,12 @@ const navItems = [
 
 export function Header({ actions }: { actions?: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const { user } = useSession();
+
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
+
   return (
     <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-10">
       <div className="max-w-6xl mx-auto px-5 py-4 flex items-center gap-4 whitespace-nowrap">
@@ -40,12 +48,29 @@ export function Header({ actions }: { actions?: ReactNode }) {
         </nav>
         <div className="flex items-center gap-2 ml-auto shrink-0">
           {actions}
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-transparent border-[1.5px] border-cta text-cta text-xs font-bold whitespace-nowrap hover:bg-cta hover:text-white transition-colors"
-          >
-            Sign Up
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to="/conversations"
+                className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-transparent border-[1.5px] border-cta text-cta text-xs font-bold whitespace-nowrap hover:bg-cta hover:text-white transition-colors"
+              >
+                Saved
+              </Link>
+              <button
+                onClick={signOut}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-cta text-cta-foreground text-xs font-bold whitespace-nowrap hover:bg-cta/90 transition-colors"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-transparent border-[1.5px] border-cta text-cta text-xs font-bold whitespace-nowrap hover:bg-cta hover:text-white transition-colors"
+            >
+              Sign Up
+            </Link>
+          )}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
@@ -77,6 +102,15 @@ export function Header({ actions }: { actions?: ReactNode }) {
                     {item.label}
                   </Link>
                 ))}
+                {user && (
+                  <Link
+                    to="/conversations"
+                    onClick={() => setOpen(false)}
+                    className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                  >
+                    Saved conversations
+                  </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
