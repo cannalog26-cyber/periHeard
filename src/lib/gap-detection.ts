@@ -22,11 +22,35 @@ const PATTERNS: Record<"vasomotor" | "menstrual" | "sleep" | "genitourinary", Re
     /\b(vagina\w*|dryness|painful\s+sex|sex\s+is|libido|sex\s*drive|urin\w*|bladder|uti|utis|incontinen\w*|leak\w*|prolapse|pelvic)\b/i,
 };
 
+// Try to pull an explicit age out of the user's free text. We only match
+// clear, self-referential patterns to avoid grabbing arbitrary numbers
+// (e.g. "3 months ago", "period of 5 days"). Returns undefined when unsure.
+export function extractAge(text: string): number | undefined {
+  const t = text ?? "";
+  const patterns: RegExp[] = [
+    /\bi(?:'|\s+a)?m\s+(\d{2})\b(?!\s*(?:days?|weeks?|months?|years?\s+ago))/i,
+    /\bi\s+am\s+(\d{2})\b(?!\s*(?:days?|weeks?|months?|years?\s+ago))/i,
+    /\bage[d]?\s+(\d{2})\b/i,
+    /\bmy\s+age\s+is\s+(\d{2})\b/i,
+    /\b(\d{2})\s*(?:yrs?|years?)\s*old\b/i,
+    /\b(\d{2})\s*[- ]?year[- ]?old\b/i,
+    /\b(\d{2})\s*yo\b/i,
+  ];
+  for (const re of patterns) {
+    const m = t.match(re);
+    if (m) {
+      const n = Number.parseInt(m[1], 10);
+      if (n >= 12 && n <= 100) return n;
+    }
+  }
+  return undefined;
+}
+
 export function detectGaps(text: string): GapQuestionId[] {
   const t = text ?? "";
   const gaps: GapQuestionId[] = [];
-  // Age is always required and comes first.
-  gaps.push("age");
+  // Age is required, but skip the question if the user already told us.
+  if (extractAge(t) === undefined) gaps.push("age");
   // Vasomotor - always ask if not clearly mentioned (diagnostically important)
   if (!PATTERNS.vasomotor.test(t)) gaps.push("vasomotor");
   if (!PATTERNS.menstrual.test(t)) gaps.push("menstrual");
