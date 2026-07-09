@@ -45,6 +45,7 @@ If the input contains any of the following, the brief must open with an urgent-c
 - Chest pain, difficulty breathing or severe breathlessness, unilateral leg swelling (especially if on/considering HRT)
 - New severe headache, speech difficulty, or other neurological symptoms
 - Suicidal thoughts or feeling unable to keep themselves safe - respond with warmth, do NOT proceed to a standard brief; signpost to urgent support (GP same-day, 111 option 2, Samaritans 116 123, 999 if immediate danger)
+- If the user describes a breast lump, the brief must focus ONLY on that red flag. Do not include any other symptoms, clusters, or non-urgent content in symptom_summary, symptoms_by_system, impact_statement, or questions_to_ask. The one_line_summary, red_flags, urgent_banner, and what_to_expect should address the breast lump and urgent review alone; other incidental symptoms should be omitted unless they are also red flags.
 Do not list or catastrophise beyond what the user described. One clear line per flag.
 
 DISMISSAL TOOLKIT
