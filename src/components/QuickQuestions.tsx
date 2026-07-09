@@ -69,7 +69,11 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
   };
 
   const requiresAge = questions.includes("age");
-  const canSubmit = !requiresAge || !!answers.age;
+  const canSubmit =
+    !requiresAge ||
+    (typeof answers.ageYears === "number" &&
+      answers.ageYears >= 12 &&
+      answers.ageYears <= 100);
 
   return (
     <div className="rounded-2xl border border-input-card-border bg-input-card shadow-sm p-5 sm:p-6 space-y-6">
@@ -86,25 +90,27 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
           <label className="block text-[15px] font-medium text-foreground">
             How old are you? <span className="text-secondary">(required)</span>
           </label>
-          <div className="flex flex-wrap gap-2">
-            {(
-              [
-                ["under_40", "Under 40"],
-                ["40_44", "40–44"],
-                ["45_plus", "45 or over"],
-              ] as const
-            ).map(([value, label]) => (
-              <Chip
-                key={value}
-                active={answers.age === value}
-                onClick={() => update("age", answers.age === value ? undefined : value)}
-              >
-                {label}
-              </Chip>
-            ))}
-          </div>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={12}
+            max={100}
+            value={answers.ageYears ?? ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v === "") {
+                update("ageYears", undefined);
+                return;
+              }
+              const n = Number.parseInt(v, 10);
+              update("ageYears", Number.isFinite(n) ? n : undefined);
+            }}
+            placeholder="e.g. 46"
+            className="w-32 rounded-xl border border-input-card-border bg-background/40 px-3 py-2 text-[15px] leading-relaxed placeholder:text-foreground/60 focus:outline-none focus:border-secondary/60"
+          />
           <p className="text-xs text-muted-foreground">
-            Guidance from NICE differs by age band, so this shapes the brief.
+            Your age helps shape the brief. Perimenopause symptoms can begin from around 35;
+            under 30 we'll build a general appointment brief instead.
           </p>
         </div>
       )}
