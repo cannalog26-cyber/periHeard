@@ -165,9 +165,6 @@ function Index() {
               </button>
         </div>
       </div>
-      <p className="text-[11px] text-foreground/75 text-center mt-2">
-        This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.
-      </p>
     </>
   );
 
@@ -222,6 +219,9 @@ function Index() {
             <div className="w-full flex flex-col">
               {chatInput(true)}
             </div>
+            <p className="text-[11px] text-foreground/75 text-center leading-relaxed max-w-xl">
+              This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.
+            </p>
           </div>
         ) : showingGaps ? (
           <div className="max-w-3xl mx-auto px-5 py-8 w-full">
@@ -267,6 +267,16 @@ function Index() {
             )}
 
             <div ref={bottomRef} />
+
+            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 space-y-3">
+              {latestBrief?.disclaimer && (
+                <p className="text-sm text-muted-foreground italic leading-relaxed">{latestBrief.disclaimer}</p>
+              )}
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Patient-completed summary, organised with reference to NICE guideline NG23. Not clinically verified.
+                {" "}Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
+              </p>
+            </div>
           </div>
         )}
       </main>

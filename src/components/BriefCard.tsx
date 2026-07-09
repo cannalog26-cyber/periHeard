@@ -293,8 +293,7 @@ export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrie
         </Section>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-        <p className="text-sm text-muted-foreground italic leading-relaxed">{brief.disclaimer}</p>
+      <div className="flex flex-wrap items-center justify-end gap-4 pt-2">
         <div className="flex items-center gap-1">
           <CopyButton text={briefToPlainText(brief)} />
           <button
@@ -308,10 +307,6 @@ export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrie
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground leading-relaxed pt-1">
-        Patient-completed summary, organised with reference to NICE guideline NG23. Not clinically verified.
-        {" "}Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
-      </p>
 
       <Section icon={BookOpen} title="Resources">
         <ul className="space-y-2 text-[15px] text-muted-foreground">
