@@ -13,6 +13,7 @@ import {
   Check,
   Download,
   BookOpen,
+  ArrowUp,
 } from "lucide-react";
 import { useState } from "react";
 import { openBriefForPrint } from "@/lib/print-brief";
