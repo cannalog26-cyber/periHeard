@@ -157,10 +157,13 @@ function Index() {
       }
     }
     const forceGeneral = false;
-    // If the user already stated their age in the original free-text, don't
-    // repeat it in the additional-information block.
-    const answersForBrief: GapAnswers =
-      inferred !== undefined ? { ...mergedAnswers, ageYears: undefined, age: undefined } : mergedAnswers;
+    // Never include age in the additional-information block; it is already
+    // used to set the brief's age framing and may appear elsewhere.
+    const answersForBrief: GapAnswers = {
+      ...mergedAnswers,
+      ageYears: undefined,
+      age: undefined,
+    };
     const combined = pendingText + formatAnswersForBrief(answersForBrief);
     const perimenopausePattern = hasPerimenopausePattern(pendingText, mergedAnswers);
     setGapQuestions(null);
