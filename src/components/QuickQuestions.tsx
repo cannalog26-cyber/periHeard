@@ -68,15 +68,46 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
     });
   };
 
+  const requiresAge = questions.includes("age");
+  const canSubmit = !requiresAge || !!answers.age;
+
   return (
     <div className="rounded-2xl border border-input-card-border bg-input-card shadow-sm p-5 sm:p-6 space-y-6">
       <div className="space-y-1">
         <h3 className="font-serif text-2xl font-semibold text-foreground">A few quick questions</h3>
         <p className="text-sm text-muted-foreground">
-          These help fill in the picture so your brief is as useful as possible. All optional - skip
-          any that don't apply.
+          These help fill in the picture so your brief is as useful as possible. Age is required;
+          the rest are optional.
         </p>
       </div>
+
+      {questions.includes("age") && (
+        <div className="space-y-2">
+          <label className="block text-[15px] font-medium text-foreground">
+            How old are you? <span className="text-secondary">(required)</span>
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {(
+              [
+                ["under_40", "Under 40"],
+                ["40_44", "40–44"],
+                ["45_plus", "45 or over"],
+              ] as const
+            ).map(([value, label]) => (
+              <Chip
+                key={value}
+                active={answers.age === value}
+                onClick={() => update("age", answers.age === value ? undefined : value)}
+              >
+                {label}
+              </Chip>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Guidance from NICE differs by age band, so this shapes the brief.
+          </p>
+        </div>
+      )}
 
       {questions.includes("vasomotor") && (
         <div className="space-y-2">
@@ -188,7 +219,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
       <div className="flex flex-col sm:flex-row gap-2 pt-2">
         <button
           onClick={() => onSubmit(answers)}
-          disabled={disabled}
+          disabled={disabled || !canSubmit}
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-40 transition-all shadow-sm"
         >
           Build my brief
@@ -196,7 +227,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
         </button>
         <button
           onClick={onSkip}
-          disabled={disabled}
+          disabled={disabled || !canSubmit}
           className="inline-flex items-center justify-center gap-1.5 h-12 px-5 rounded-full border border-cta/40 text-cta text-sm font-medium hover:bg-cta/10 disabled:opacity-40 transition-all"
         >
           Skip
