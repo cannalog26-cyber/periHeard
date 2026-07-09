@@ -404,8 +404,7 @@ function Index() {
                 <p className="text-sm text-muted-foreground italic leading-relaxed">{latestBrief.disclaimer}</p>
               )}
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Patient-completed summary, organised with reference to NICE guideline NG23. Not clinically verified.
-                {" "}Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
+                Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
               </p>
             </div>
           </div>
