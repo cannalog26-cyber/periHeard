@@ -74,18 +74,18 @@ export function briefToPrintableHtml(brief: Brief): string {
 
   if (brief.timeline) parts.push(section("Timeline", `<p>${esc(brief.timeline)}</p>`));
   if (brief.impact_statement)
-    parts.push(section("Impact on daily life", `<p>${esc(brief.impact_statement)}</p>`));
+    parts.push(section("Impact on your life", `<p>${esc(brief.impact_statement)}</p>`));
   if (brief.questions_to_ask?.length)
     parts.push(
       section(
-        "Questions to ask",
+        "Questions to ask your GP",
         `<ol>${brief.questions_to_ask.map((q) => `<li>${esc(q)}</li>`).join("")}</ol>`,
       ),
     );
   if (brief.if_dismissed?.length)
     parts.push(
       section(
-        "If I feel dismissed, I can say",
+        "If you feel dismissed, try",
         `<ul class="quotes">${brief.if_dismissed.map((q) => `<li>&ldquo;${esc(q)}&rdquo;</li>`).join("")}</ul>`,
       ),
     );
@@ -94,7 +94,7 @@ export function briefToPrintableHtml(brief: Brief): string {
   if (brief.what_to_expect)
     parts.push(section("What a good consultation looks like", `<p>${esc(brief.what_to_expect)}</p>`));
   if (brief.bring_with_you?.length)
-    parts.push(section("Bring with me", list(brief.bring_with_you)));
+    parts.push(section("Bring with you", list(brief.bring_with_you)));
 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
 <title>Appointment brief - ${dateStr}</title>
@@ -309,19 +309,19 @@ export async function saveBriefAsPdf(brief: Brief) {
     }
 
     if (brief.impact_statement) {
-      heading("Impact on daily life");
+      heading("Impact on your life");
       writeLines(brief.impact_statement);
     }
 
     if (brief.questions_to_ask?.length) {
-      heading("Questions to ask");
+      heading("Questions to ask your GP");
       brief.questions_to_ask.forEach((q, i) =>
         writeLines(`${i + 1}. ${q}`, { indent: 2, gap: 0.4 }),
       );
     }
 
     if (brief.if_dismissed?.length) {
-      heading("If I feel dismissed, I can say");
+      heading("If you feel dismissed, try");
       for (const x of brief.if_dismissed)
         writeLines(`"${x}"`, { style: "italic", indent: 2, gap: 0.4 });
     }
@@ -338,7 +338,7 @@ export async function saveBriefAsPdf(brief: Brief) {
     }
 
     if (brief.bring_with_you?.length) {
-      heading("Bring with me");
+      heading("Bring with you");
       for (const x of brief.bring_with_you)
         writeLines(`• ${x}`, { indent: 2, gap: 0.3 });
     }
