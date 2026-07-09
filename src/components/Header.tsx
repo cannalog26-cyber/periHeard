@@ -24,7 +24,14 @@ export function Header({ actions }: { actions?: ReactNode }) {
           {navItems.map((item) => (
             <Link
               key={item.label}
-              to={item.to as "/" | "/community" | "/resources"}
+              to={item.to}
+              onClick={(e) => {
+                if (item.scrollTo && window.location.pathname === "/") {
+                  e.preventDefault();
+                  const el = document.getElementById(item.scrollTo);
+                  el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }}
               className="text-sm font-medium text-foreground hover:text-secondary transition-colors whitespace-nowrap"
             >
               {item.label}
