@@ -10,7 +10,7 @@ export type GapQuestionId =
   | "genitourinary"
   | "goal";
 
-export type AgeBand = "under_40" | "40_44" | "45_plus";
+export type AgeBand = "under_35" | "35_39" | "40_44" | "45_plus";
 
 const PATTERNS: Record<"vasomotor" | "menstrual" | "sleep" | "genitourinary", RegExp> = {
   vasomotor: /\b(hot\s*(flush|flash)es?|night\s*sweats?|sweating|sweats?\b|flushing)\b/i,
@@ -77,7 +77,8 @@ export function formatAnswersForBrief(answers: GapAnswers): string {
     lines.push(`Age: ${answers.ageYears}.`);
   } else if (answers.age) {
     const map = {
-      under_40: "Under 40",
+      under_35: "Under 35",
+      "35_39": "35–39",
       "40_44": "40–44",
       "45_plus": "45 or over",
     } as const;

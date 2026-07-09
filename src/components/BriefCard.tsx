@@ -359,7 +359,7 @@ export function BriefCard({
               The Menopause Charity
             </a>
           </li>
-          {ageBand === "under_40" && (
+          {(ageBand === "under_35" || ageBand === "35_39") && (
             <li>
               <a
                 href="https://www.daisynetwork.org"

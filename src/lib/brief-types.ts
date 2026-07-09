@@ -43,7 +43,7 @@ export type Brief = {
   clinical?: ClinicalBrief;
 };
 
-export type AgeBand = "under_40" | "40_44" | "45_plus";
+export type AgeBand = "under_35" | "35_39" | "40_44" | "45_plus";
 
 export type ChatTurn =
   | { role: "user"; text: string; id: string; createdAt: number }

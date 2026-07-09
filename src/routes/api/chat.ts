@@ -5,7 +5,7 @@ type IncomingTurn =
   | { role: "user"; text: string }
   | { role: "assistant"; brief: unknown };
 
-type AgeBand = "under_40" | "40_44" | "45_plus";
+type AgeBand = "under_35" | "35_39" | "40_44" | "45_plus";
 type BriefMode = "perimenopause" | "general";
 
 function ageInstruction(ageBand?: AgeBand): string {
@@ -13,8 +13,10 @@ function ageInstruction(ageBand?: AgeBand): string {
     return "PATIENT AGE BAND: 45 or over. Apply the standard NG23 clinical pathway for women 45+ (symptom-based diagnosis, no routine FSH).";
   if (ageBand === "40_44")
     return `PATIENT AGE BAND: 40–44. Build the standard perimenopause brief. In "what_to_expect", include verbatim (in addition to the standard closing line) this sentence: "At your age, your GP may suggest a blood test (FSH) as part of the picture — NICE guidance supports this for women aged 40–45, so don't be surprised if it's offered or if it isn't."`;
-  if (ageBand === "under_40")
-    return `PATIENT AGE BAND: Under 40. REFRAME the brief. Do NOT use the phrase "consistent with perimenopause" or any equivalent perimenopause-framed language in patient-facing fields. Instead, "one_line_summary" should say the patient is experiencing these symptoms and, given her age, would like them properly assessed — noting that menopausal-type symptoms under 40 can have causes that need investigation, including premature ovarian insufficiency (POI). "questions_to_ask" must be reframed (e.g. "Could my symptoms be hormonal, and what tests would help establish that?", "Given I'm under 40, could this be premature ovarian insufficiency, and would FSH testing help?", "Would you consider a referral to a gynaecologist or menopause specialist?"). The clinical brief should reflect the NICE CKS POI pathway (FSH >25 IU/L on two samples 4–6 weeks apart, exclude pregnancy/thyroid/prolactin, specialist referral). Do not assert POI as a diagnosis — present it as a differential to investigate.`;
+  if (ageBand === "35_39")
+    return `PATIENT AGE BAND: 35–39. Perimenopause may be mentioned as ONE possibility only — never asserted. Do NOT use the phrase "consistent with perimenopause" or any equivalent asserted framing in patient-facing fields. "one_line_summary" should present the symptoms as the patient's account warranting proper assessment, noting perimenopause as one possibility among others. In "what_to_expect", include verbatim (in addition to the standard closing line): "At your age, NICE guidance supports your GP investigating further, including blood tests, to rule out other causes including early ovarian insufficiency." "questions_to_ask" MUST include verbatim: "Could my symptoms be early perimenopause or something else, and what tests would help establish that?" The clinical brief should reflect the NICE CKS POI pathway (FSH >25 IU/L on two samples 4–6 weeks apart, exclude pregnancy/thyroid/prolactin, specialist referral) alongside perimenopause as a differential. Do not assert either as a diagnosis.`;
+  if (ageBand === "under_35")
+    return `PATIENT AGE BAND: Under 35. REFRAME the brief. Do NOT use the phrase "consistent with perimenopause" or any perimenopause-framed language in patient-facing fields. "one_line_summary" MUST NOT mention perimenopause; it should present the patient's symptoms as her account warranting proper assessment. "questions_to_ask" should focus on getting the symptoms investigated (e.g. "Could my symptoms be hormonal, and what tests would help establish that?", "Would you consider a referral to a gynaecologist or specialist?"). The clinical brief may reference the NICE CKS POI pathway (FSH >25 IU/L on two samples 4–6 weeks apart, exclude pregnancy/thyroid/prolactin, specialist referral) as one differential to investigate. Do not assert POI or perimenopause as a diagnosis.`;
   return "";
 }
 
