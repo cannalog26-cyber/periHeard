@@ -1,5 +1,5 @@
 export type SymptomCluster = {
-  cluster: string;
+  cluster: string; // plain English, e.g. "Memory and thinking", "Vaginal and urinary" - never clinical terms
   detail: string;
   duration_pattern: string;
 };
