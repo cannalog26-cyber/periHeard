@@ -12,13 +12,10 @@ import {
   Briefcase,
   Copy,
   Check,
-  Download,
   BookOpen,
   ArrowUp,
 } from "lucide-react";
 import { useState } from "react";
-import { saveBriefAsPdf } from "@/lib/print-brief";
-import { toast } from "sonner";
 
 function Section({
   icon: Icon,
