@@ -45,6 +45,7 @@ function Index() {
   } | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const briefTopRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     textareaRef.current?.focus();
@@ -61,7 +62,14 @@ function Index() {
   }, [input, inputOpen]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const lastTurn = turns[turns.length - 1];
+    if (!loading && lastTurn?.role === "assistant" && lastTurn?.brief) {
+      // A brief has just finished generating: start from the top of the brief so the user
+      // reads it from the beginning, not the bottom.
+      briefTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [turns.length, loading, gapQuestions]);
 
   async function runBrief(
@@ -424,7 +432,10 @@ function Index() {
                   </div>
                 </div>
               ) : (
-                <div key={t.id}>
+                <div
+                  key={t.id}
+                  ref={t.brief === latestBrief ? briefTopRef : undefined}
+                >
                   <BriefCard
                     brief={t.brief}
                     ageBand={t.ageBand ?? latestAgeBand}
