@@ -157,7 +157,11 @@ function Index() {
       }
     }
     const forceGeneral = false;
-    const combined = pendingText + formatAnswersForBrief(mergedAnswers);
+    // If the user already stated their age in the original free-text, don't
+    // repeat it in the additional-information block.
+    const answersForBrief: GapAnswers =
+      inferred !== undefined ? { ...mergedAnswers, ageYears: undefined, age: undefined } : mergedAnswers;
+    const combined = pendingText + formatAnswersForBrief(answersForBrief);
     const perimenopausePattern = hasPerimenopausePattern(pendingText, mergedAnswers);
     setGapQuestions(null);
     if (forceGeneral || !perimenopausePattern) {
