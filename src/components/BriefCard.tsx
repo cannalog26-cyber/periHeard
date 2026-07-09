@@ -17,7 +17,7 @@ import {
   ArrowUp,
 } from "lucide-react";
 import { useState } from "react";
-import { openBriefForPrint } from "@/lib/print-brief";
+import { openBriefForPrint, saveBriefAsPdf } from "@/lib/print-brief";
 
 function Section({
   icon: Icon,
@@ -307,7 +307,7 @@ export function BriefCard({
           <CopyButton text={briefToPlainText(brief)} />
           <button
             type="button"
-            onClick={() => openBriefForPrint(brief)}
+            onClick={() => saveBriefAsPdf(brief)}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
           >
             <Download className="h-3.5 w-3.5" />
