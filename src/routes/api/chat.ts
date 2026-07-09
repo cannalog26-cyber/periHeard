@@ -116,6 +116,12 @@ export const Route = createFileRoute("/api/chat")({
           );
         }
 
+        // Hard sanitize: the model must never surface an urgent_banner.
+        // Red flags are shown exclusively in the dedicated red_flags section.
+        if (brief && typeof brief === "object") {
+          (brief as { urgent_banner?: unknown }).urgent_banner = null;
+        }
+
         return new Response(JSON.stringify({ brief }), {
           headers: { "Content-Type": "application/json" },
         });
