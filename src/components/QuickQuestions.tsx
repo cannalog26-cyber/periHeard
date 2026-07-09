@@ -93,7 +93,7 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
         </p>
       </div>
 
-      {questions.includes("age") && (
+      {questions.includes("age") && notedAge === undefined && (
         <div className="space-y-2">
           <label className="block text-[15px] font-medium text-foreground">
             How old are you? <span className="text-secondary">(required)</span>
