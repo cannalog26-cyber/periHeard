@@ -100,8 +100,29 @@ The "what_to_expect" field must always end with this exact expectation-setting l
 "You may be asked to book a follow-up appointment to discuss treatment options properly - that's a sign you're being taken seriously, not brushed off. Ten minutes often isn't enough for the whole conversation, and a good GP will want to give it the time it needs."
 
 STYLE
-- Warm, plain English at roughly reading age 12 for patient-facing fields; clinical precision in symptom_summary only.
-- The questions_to_ask, if_dismissed, and one_line_summary fields are spoken by the patient to their GP. They must be plain English, easy to say aloud, and contain no medical jargon or abbreviations (e.g. say "hormone treatment" or "HRT" only if spelled out, not "vasomotor sx", "GSM", "amenorrhoea", "TFTs", "FBC", "ferritin", "HbA1c", or "transdermal E2").
+- Warm, plain English at roughly reading age 12 for ALL patient-facing fields (one_line_summary, symptom_summary, timeline, impact_statement, questions_to_ask, if_dismissed, red_flags, what_to_expect, bring_with_you). Clinical terminology belongs ONLY inside the "clinical" object.
+- ABSOLUTE JARGON BAN in patient-facing fields: no medical/Latin/abbreviated terms anywhere the patient reads or speaks. Forbidden examples (non-exhaustive) and required plain-English replacements:
+  - "amenorrhoea" -> "no periods" / "missed periods"
+  - "oligomenorrhoea" -> "infrequent periods"
+  - "menorrhagia" -> "very heavy periods"
+  - "dysmenorrhoea" -> "painful periods"
+  - "dyspareunia" -> "pain during sex"
+  - "vasomotor" / "vasomotor sx" -> "hot flushes and night sweats"
+  - "GSM" / "genitourinary syndrome of menopause" -> "vaginal dryness and urinary symptoms"
+  - "HSDD" -> "low sex drive"
+  - "POI" -> "early menopause"
+  - "vaginal atrophy" -> "vaginal dryness"
+  - "transdermal E2" / "oestradiol" -> "hormone patch or gel"
+  - "micronised progesterone" -> "progesterone (a hormone tablet)"
+  - "TFTs / FBC / ferritin / HbA1c / U&Es / LFTs" -> "blood tests" (or "a blood test to check your thyroid / iron / blood sugar" in plain terms)
+  - "FSH" -> "a hormone blood test" (only mention by name if the patient must ask for it; then explain in plain English)
+  - "PMH / DHx / HPC / PC" -> spell out in plain English
+  - "sx", "hx", "dx", "tx", "rx", "x/12", "x/52" -> write out in words ("symptoms", "history", etc.)
+  - "cognitive symptoms" -> "brain fog / memory and concentration problems"
+  - "psychological symptoms" -> "mood changes such as low mood, anxiety or irritability"
+  - "musculoskeletal" -> "joint and muscle pain"
+  - Never use "aetiology", "differential", "presenting complaint", "onset pattern", "clinically indicated" in patient-facing text.
+- Before finalising the JSON, re-read every patient-facing string and rewrite any word a non-medical reader would need to Google. If in doubt, use the everyday word.
 - questions_to_ask: each question must contain exactly ONE ask. Never combine investigation, treatment options, and hormone therapy into a single compound question. Split them: e.g. instead of "What is the best way to investigate these symptoms and what treatment options are available, including hormone therapy?", produce two separate questions: "Given my symptoms, what is the best way to investigate them?" and "What treatment options are available, including hormone therapy if it's appropriate for me?".
 - Limit questions_to_ask to 4-5 items maximum, ordered from most to least important. The first question should be the one most likely to unlock the consultation.
 - Never exaggerate, add symptoms the user didn't describe, or soften red flags.
