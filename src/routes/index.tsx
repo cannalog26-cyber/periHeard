@@ -6,12 +6,14 @@ import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
-import type { Brief, ChatTurn } from "@/lib/brief-types";
+import type { AgeBand, Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
 import { QuickQuestions } from "@/components/QuickQuestions";
 import {
   detectGaps,
+  detectCrisis,
   formatAnswersForBrief,
+  hasPerimenopausePattern,
   type GapAnswers,
   type GapQuestionId,
 } from "@/lib/gap-detection";
@@ -31,6 +33,12 @@ function Index() {
   const [inputOpen, setInputOpen] = useState(false);
   const [gapQuestions, setGapQuestions] = useState<GapQuestionId[] | null>(null);
   const [pendingText, setPendingText] = useState<string>("");
+  const [crisisAcknowledged, setCrisisAcknowledged] = useState(false);
+  const [crisisPending, setCrisisPending] = useState(false);
+  const [noPatternPrompt, setNoPatternPrompt] = useState<{
+    text: string;
+    ageBand: AgeBand;
+  } | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,7 +60,10 @@ function Index() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns.length, loading, gapQuestions]);
 
-  async function runBrief(userText: string) {
+  async function runBrief(
+    userText: string,
+    opts?: { ageBand?: AgeBand; mode?: "perimenopause" | "general" },
+  ) {
     const userTurn: ChatTurn = {
       role: "user",
       text: userText,
@@ -67,6 +78,8 @@ function Index() {
         turns: nextTurns.map((t) =>
           t.role === "user" ? { role: "user", text: t.text } : { role: "assistant", brief: t.brief },
         ),
+        ageBand: opts?.ageBand,
+        mode: opts?.mode,
       };
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -77,7 +90,14 @@ function Index() {
       if (!res.ok || !data.brief) {
         throw new Error(data.error ?? "Something went wrong.");
       }
-      append({ role: "assistant", brief: data.brief, id: newId(), createdAt: Date.now() });
+      append({
+        role: "assistant",
+        brief: data.brief,
+        id: newId(),
+        createdAt: Date.now(),
+        ageBand: opts?.ageBand,
+        mode: opts?.mode,
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -92,6 +112,13 @@ function Index() {
     if (!text || loading) return;
     // First submission: interpose quick questions to fill clinical gaps.
     if (turns.length === 0) {
+      // Crisis signposting always leads.
+      if (!crisisAcknowledged && detectCrisis(text)) {
+        setPendingText(text);
+        setInput("");
+        setCrisisPending(true);
+        return;
+      }
       const gaps = detectGaps(text);
       setPendingText(text);
       setInput("");
@@ -103,17 +130,32 @@ function Index() {
   }
 
   function handleGapSubmit(answers: GapAnswers) {
+    const ageBand = (answers.age ?? "45_plus") as AgeBand;
     const combined = pendingText + formatAnswersForBrief(answers);
+    const perimenopausePattern = hasPerimenopausePattern(pendingText, answers);
     setGapQuestions(null);
+    if (!perimenopausePattern) {
+      // Don't push a perimenopause-framed brief for an unrelated pattern.
+      setNoPatternPrompt({ text: combined, ageBand });
+      setPendingText("");
+      return;
+    }
     setPendingText("");
-    void runBrief(combined);
+    void runBrief(combined, { ageBand, mode: "perimenopause" });
   }
 
   function handleGapSkip() {
-    const text = pendingText;
-    setGapQuestions(null);
-    setPendingText("");
-    void runBrief(text);
+    // Age is required, so QuickQuestions blocks skip until age is set.
+    // We reuse handleGapSubmit's logic by treating skip as "submit with only age".
+    // In practice QuickQuestions won't call skip with no age; guard anyway.
+    handleGapSubmit({});
+  }
+
+  function acknowledgeCrisisAndContinue() {
+    setCrisisAcknowledged(true);
+    setCrisisPending(false);
+    const gaps = detectGaps(pendingText);
+    setGapQuestions(gaps);
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -123,11 +165,18 @@ function Index() {
     }
   }
 
-  const isEmpty = hydrated && turns.length === 0 && !gapQuestions;
+  const isEmpty =
+    hydrated && turns.length === 0 && !gapQuestions && !crisisPending && !noPatternPrompt;
   const showingGaps = hydrated && turns.length === 0 && !!gapQuestions;
+  const showingCrisis = hydrated && turns.length === 0 && crisisPending;
+  const showingNoPattern = hydrated && turns.length === 0 && !!noPatternPrompt;
   const latestBrief = [...turns].reverse().find(
     (t): t is ChatTurn & { brief: Brief } => t.role === "assistant" && !!t.brief,
   )?.brief;
+  const latestAssistant = [...turns].reverse().find(
+    (t): t is Extract<ChatTurn, { role: "assistant" }> => t.role === "assistant",
+  );
+  const latestAgeBand = latestAssistant?.ageBand;
 
   const chatInput = (expanded = false) => (
     <>
