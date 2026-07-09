@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 
 const navItems = [
   { label: "Symptom Checker", to: "/" },
-  { label: "Talk to Peri", to: "/" },
+  { label: "Talk to Peri", to: "/", scrollTo: "brief-builder" },
   { label: "Community Forum", to: "/community" },
   { label: "Resources", to: "/resources" },
 ];
