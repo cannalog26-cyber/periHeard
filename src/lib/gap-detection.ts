@@ -39,6 +39,7 @@ export function detectGaps(text: string): GapQuestionId[] {
 
 export type GapAnswers = {
   age?: AgeBand;
+  ageYears?: number;
   vasomotor?: "yes" | "no" | "not_sure";
   menstrual?: { chips: string[]; note?: string };
   sleep?: "fine" | "disturbed" | "very_poor";
@@ -48,7 +49,9 @@ export type GapAnswers = {
 
 export function formatAnswersForBrief(answers: GapAnswers): string {
   const lines: string[] = [];
-  if (answers.age) {
+  if (typeof answers.ageYears === "number") {
+    lines.push(`Age: ${answers.ageYears}.`);
+  } else if (answers.age) {
     const map = {
       under_40: "Under 40",
       "40_44": "40–44",

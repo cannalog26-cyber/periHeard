@@ -37,7 +37,7 @@ function Index() {
   const [crisisPending, setCrisisPending] = useState(false);
   const [noPatternPrompt, setNoPatternPrompt] = useState<{
     text: string;
-    ageBand: AgeBand;
+    ageBand?: AgeBand;
   } | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -130,11 +130,27 @@ function Index() {
   }
 
   function handleGapSubmit(answers: GapAnswers) {
-    const ageBand = (answers.age ?? "45_plus") as AgeBand;
+    const years = answers.ageYears;
+    // Derive age band from numeric age. Under 30 is excluded from the
+    // perimenopause pathway entirely and always gets a general brief.
+    let ageBand: AgeBand | undefined;
+    let forceGeneral = false;
+    if (typeof years === "number") {
+      if (years < 30) {
+        forceGeneral = true;
+        ageBand = undefined;
+      } else if (years < 45) {
+        ageBand = "40_44";
+      } else {
+        ageBand = "45_plus";
+      }
+    } else {
+      ageBand = "45_plus";
+    }
     const combined = pendingText + formatAnswersForBrief(answers);
     const perimenopausePattern = hasPerimenopausePattern(pendingText, answers);
     setGapQuestions(null);
-    if (!perimenopausePattern) {
+    if (forceGeneral || !perimenopausePattern) {
       // Don't push a perimenopause-framed brief for an unrelated pattern.
       setNoPatternPrompt({ text: combined, ageBand });
       setPendingText("");
