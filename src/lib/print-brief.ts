@@ -86,7 +86,7 @@ export function briefToPrintableHtml(brief: Brief): string {
     color: #1f2b26; font-size: 11pt; line-height: 1.5;
     background: #fff;
   }
-  .page { max-width: 720px; margin: 0 auto; padding: 24px; }
+  .page { max-width: 640px; margin: 0 auto; padding: 16px; }
   header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d6d1c4; padding-bottom: 8px; margin-bottom: 18px; }
   header h1 { font-family: Georgia, "Times New Roman", serif; font-size: 20pt; margin: 0; color: #1f3d33; letter-spacing: -0.01em; }
   header h1 .mark-p { color: #7a1f1f; }
