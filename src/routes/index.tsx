@@ -266,12 +266,12 @@ function Index() {
             <div ref={bottomRef} />
 
             <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 space-y-3">
+              {latestBrief?.disclaimer && (
+                <p className="text-sm text-muted-foreground italic leading-relaxed">{latestBrief.disclaimer}</p>
+              )}
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Patient-completed summary, organised with reference to NICE guideline NG23. Not clinically verified.
                 {" "}Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
-              </p>
-              <p className="text-[11px] text-foreground/75 leading-relaxed">
-                This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.
               </p>
             </div>
           </div>
