@@ -246,9 +246,12 @@ function Index() {
                   </div>
                 </div>
               ) : (
-              <div key={t.id}>
-                <BriefCard brief={t.brief} onUpdateBrief={() => setInputOpen(true)} />
-              </div>
+                <div key={t.id}>
+                  <BriefCard
+                    brief={t.brief}
+                    onUpdateBrief={t.brief === latestBrief ? () => setInputOpen(true) : undefined}
+                  />
+                </div>
               ),
             )}
 
