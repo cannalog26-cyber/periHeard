@@ -103,7 +103,10 @@ export const Route = createFileRoute("/api/transcribe")({
         const original = data.text ?? "";
 
         let translated: string | null = null;
-        if (translate && original && language !== "en") {
+        // Only translate when the user explicitly picked a non-English language.
+        // "auto" (default) and "en" go straight through so English speech isn't
+        // rewritten into clinical third-person jargon.
+        if (translate && original && language && language !== "en" && language !== "auto") {
           translated = await translateToEnglish(key, original, language);
         }
 
