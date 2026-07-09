@@ -142,49 +142,165 @@ export function openBriefForPrint(brief: Brief) {
 }
 
 export async function saveBriefAsPdf(brief: Brief) {
-  const html = briefToPrintableHtml(brief);
-  const container = document.createElement("div");
-  container.innerHTML = html;
-  // Extract just the .page element for rendering
-  const page = container.querySelector(".page") as HTMLElement | null;
-  const styleEl = container.querySelector("style");
-  if (!page) return;
-  // html2canvas often ignores <style> tags inside the captured element,
-  // so inject the stylesheet into <head> for the duration of the render.
-  const injectedStyle = document.createElement("style");
-  injectedStyle.setAttribute("data-brief-pdf", "1");
-  injectedStyle.textContent = styleEl?.textContent ?? "";
-  document.head.appendChild(injectedStyle);
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "absolute";
-  wrapper.style.left = "0";
-  wrapper.style.top = "0";
-  wrapper.style.width = "800px";
-  wrapper.style.background = "#fff";
-  wrapper.style.zIndex = "-1";
-  wrapper.style.opacity = "0";
-  wrapper.style.pointerEvents = "none";
-  wrapper.appendChild(page.cloneNode(true));
-  document.body.appendChild(wrapper);
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
 
-  try {
-    const mod = await import("html2pdf.js");
-    const html2pdf = (mod as any).default ?? (mod as any);
-    await html2pdf()
-      .set({
-        margin: [10, 10, 10, 10],
-        filename: `periHeard-brief.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] },
-      })
-      .from(wrapper)
-      .save();
-  } finally {
-    document.body.removeChild(wrapper);
-    injectedStyle.remove();
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const marginX = 16;
+  const marginY = 18;
+  const contentW = pageW - marginX * 2;
+  let y = marginY;
+
+  const dateStr = new Date().toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const ensureSpace = (needed: number) => {
+    if (y + needed > pageH - marginY) {
+      doc.addPage();
+      y = marginY;
+    }
+  };
+
+  const writeLines = (
+    text: string,
+    opts: { size?: number; style?: "normal" | "bold" | "italic"; color?: [number, number, number]; indent?: number; gap?: number } = {},
+  ) => {
+    const { size = 11, style = "normal", color = [31, 43, 38], indent = 0, gap = 1.5 } = opts;
+    doc.setFont("helvetica", style);
+    doc.setFontSize(size);
+    doc.setTextColor(color[0], color[1], color[2]);
+    const lines = doc.splitTextToSize(text, contentW - indent);
+    const lineH = size * 0.4;
+    for (const line of lines) {
+      ensureSpace(lineH);
+      doc.text(line, marginX + indent, y);
+      y += lineH;
+    }
+    y += gap;
+  };
+
+  const heading = (title: string, urgent = false) => {
+    ensureSpace(10);
+    y += 2;
+    const color: [number, number, number] = urgent ? [111, 31, 23] : [31, 61, 51];
+    doc.setDrawColor(214, 209, 196);
+    doc.line(marginX, y, marginX + contentW, y);
+    y += 5;
+    writeLines(title.toUpperCase(), { size: 10, style: "bold", color, gap: 3 });
+  };
+
+  // Header
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.setTextColor(31, 61, 51);
+  doc.text("periHeard", marginX, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(107, 111, 106);
+  doc.text(`Prepared ${dateStr}`, pageW - marginX, y, { align: "right" });
+  y += 4;
+  doc.setFontSize(10);
+  doc.setTextColor(74, 74, 74);
+  doc.text("Appointment brief", marginX, y);
+  y += 4;
+  doc.setDrawColor(214, 209, 196);
+  doc.line(marginX, y, pageW - marginX, y);
+  y += 6;
+
+  if (brief.urgent_banner) {
+    ensureSpace(20);
+    doc.setFillColor(251, 236, 234);
+    doc.setDrawColor(201, 74, 59);
+    const bannerLines = doc.splitTextToSize(`Please read first: ${brief.urgent_banner}`, contentW - 8);
+    const bannerH = bannerLines.length * 4.5 + 6;
+    doc.roundedRect(marginX, y, contentW, bannerH, 2, 2, "FD");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(111, 31, 23);
+    let by = y + 5;
+    for (const line of bannerLines) {
+      doc.text(line, marginX + 4, by);
+      by += 4.5;
+    }
+    y += bannerH + 4;
   }
+
+  if (brief.one_line_summary) {
+    heading("Open the appointment with this");
+    writeLines(`"${brief.one_line_summary}"`, { size: 12, style: "italic" });
+  }
+
+  if (brief.symptom_summary?.length) {
+    heading("Symptom summary");
+    for (const s of brief.symptom_summary) {
+      writeLines(s.cluster, { size: 11, style: "bold", gap: 0.5 });
+      const detail = (s.detail ?? "").trim();
+      const duration = (s.duration_pattern ?? "").trim();
+      const detailHasDuration =
+        duration.length > 0 && detail.toLowerCase().includes(duration.toLowerCase());
+      const inline = duration && !detailHasDuration ? `${detail} — ${duration}` : detail;
+      if (inline) writeLines(inline, { size: 11, indent: 4 });
+    }
+  }
+
+  if (brief.timeline) {
+    heading("Timeline");
+    writeLines(brief.timeline);
+  }
+
+  if (brief.impact_statement) {
+    heading("Impact on daily life");
+    writeLines(brief.impact_statement);
+  }
+
+  if (brief.already_tried?.length) {
+    heading("Already tried");
+    for (const x of brief.already_tried) writeLines(`• ${x}`, { indent: 2, gap: 0.5 });
+  }
+
+  if (brief.questions_to_ask?.length) {
+    heading("Questions to ask");
+    brief.questions_to_ask.forEach((q, i) => writeLines(`${i + 1}. ${q}`, { indent: 2, gap: 0.5 }));
+  }
+
+  if (brief.if_dismissed?.length) {
+    heading("If I feel dismissed, I can say");
+    for (const x of brief.if_dismissed) writeLines(`"${x}"`, { style: "italic", indent: 2, gap: 0.5 });
+  }
+
+  if (brief.red_flags?.length) {
+    heading("Red flags — seek prompt review", true);
+    for (const x of brief.red_flags)
+      writeLines(`• ${x}`, { indent: 2, gap: 0.5, color: [111, 31, 23] });
+  }
+
+  if (brief.what_to_expect) {
+    heading("What a good consultation looks like");
+    writeLines(brief.what_to_expect);
+  }
+
+  if (brief.bring_with_you?.length) {
+    heading("Bring with me");
+    for (const x of brief.bring_with_you) writeLines(`• ${x}`, { indent: 2, gap: 0.5 });
+  }
+
+  // Footer disclaimer on last page
+  const disclaimer =
+    brief.disclaimer ||
+    "This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.";
+  y += 4;
+  ensureSpace(14);
+  doc.setDrawColor(214, 209, 196);
+  doc.line(marginX, y, pageW - marginX, y);
+  y += 4;
+  writeLines(disclaimer, { size: 8.5, style: "italic", color: [107, 111, 106] });
+  writeLines(`Generated ${dateStr}.`, { size: 8.5, style: "italic", color: [107, 111, 106] });
+
+  doc.save("periHeard-brief.pdf");
 }
 
 function briefToInnerHtml(brief: Brief): string {
