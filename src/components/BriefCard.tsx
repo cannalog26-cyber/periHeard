@@ -316,6 +316,16 @@ export function BriefCard({
         </div>
       </div>
 
+      {onUpdateBrief && (
+        <button
+          type="button"
+          onClick={onUpdateBrief}
+          className="w-full inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+        >
+          Update Brief
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      )}
 
       <Section icon={BookOpen} title="Resources">
         <ul className="space-y-2 text-[15px] text-muted-foreground">
@@ -373,17 +383,6 @@ export function BriefCard({
           )}
         </ul>
       </Section>
-
-      {onUpdateBrief && (
-        <button
-          type="button"
-          onClick={onUpdateBrief}
-          className="w-full inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
-        >
-          Update Brief
-          <ArrowUp className="h-4 w-4" />
-        </button>
-      )}
     </div>
   );
 }
