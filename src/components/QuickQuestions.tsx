@@ -221,7 +221,13 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
 
       <div className="flex flex-col sm:flex-row gap-2 pt-2">
         <button
-          onClick={() => onSubmit(answers)}
+          onClick={() =>
+            onSubmit(
+              notedAge !== undefined && answers.ageYears === undefined
+                ? { ...answers, ageYears: notedAge }
+                : answers,
+            )
+          }
           disabled={disabled || !canSubmit}
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-40 transition-all shadow-sm"
         >
