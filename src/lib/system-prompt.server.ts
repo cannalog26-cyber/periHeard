@@ -59,7 +59,7 @@ Respond with ONLY valid JSON, no markdown fences, no preamble. You must ALWAYS p
 {
   "urgent_banner": null or string (only if red flags present),
   "one_line_summary": string,
-  "symptom_summary": [{ "cluster": string, "detail": string, "duration_pattern": string }],
+  "symptom_summary": [{ "cluster": string, "detail": string, "duration_pattern": string }],  // cluster names should be plain English (e.g. "Memory and thinking", "Vaginal and urinary") - never clinical terms like "Cognitive" or "Genitourinary"
   "timeline": string,  // empty "" when all symptoms share one duration and there is no progression to describe; see DURATION AND TIMELINE rules
   "impact_statement": string,
   "already_tried": [string],
