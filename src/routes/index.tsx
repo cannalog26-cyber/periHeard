@@ -30,6 +30,8 @@ function newId() {
 
 function Index() {
   const { turns, append, reset, hydrated } = useConversation();
+  const { user } = useSession();
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputOpen, setInputOpen] = useState(false);
