@@ -6,6 +6,7 @@ import {
   MENSTRUAL_CHIPS,
   GOAL_CHIPS,
 } from "@/lib/gap-detection";
+import type { AgeBand } from "@/lib/brief-types";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -69,11 +70,14 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
   };
 
   const requiresAge = questions.includes("age");
-  const canSubmit =
-    !requiresAge ||
-    (typeof answers.ageYears === "number" &&
-      answers.ageYears >= 12 &&
-      answers.ageYears <= 100);
+  const canSubmit = !requiresAge || !!answers.age;
+
+  const AGE_BANDS: { value: AgeBand; label: string }[] = [
+    { value: "under_35", label: "Under 35" },
+    { value: "35_39", label: "35–39" },
+    { value: "40_44", label: "40–44" },
+    { value: "45_plus", label: "45+" },
+  ];
 
   return (
     <div className="rounded-2xl border border-input-card-border bg-input-card shadow-sm p-5 sm:p-6 space-y-6">
@@ -90,24 +94,17 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
           <label className="block text-[15px] font-medium text-foreground">
             How old are you? <span className="text-secondary">(required)</span>
           </label>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={12}
-            max={100}
-            value={answers.ageYears ?? ""}
-            onChange={(e) => {
-              const v = e.target.value;
-              if (v === "") {
-                update("ageYears", undefined);
-                return;
-              }
-              const n = Number.parseInt(v, 10);
-              update("ageYears", Number.isFinite(n) ? n : undefined);
-            }}
-            placeholder="e.g. 46"
-            className="w-32 rounded-xl border border-input-card-border bg-background/40 px-3 py-2 text-[15px] leading-relaxed placeholder:text-foreground/60 focus:outline-none focus:border-secondary/60"
-          />
+          <div className="flex flex-wrap gap-2">
+            {AGE_BANDS.map((b) => (
+              <Chip
+                key={b.value}
+                active={answers.age === b.value}
+                onClick={() => update("age", answers.age === b.value ? undefined : b.value)}
+              >
+                {b.label}
+              </Chip>
+            ))}
+          </div>
         </div>
       )}
 
