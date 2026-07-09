@@ -282,6 +282,87 @@ function Index() {
             />
             <div ref={bottomRef} />
           </div>
+        ) : showingCrisis ? (
+          <div className="max-w-3xl mx-auto px-5 py-8 w-full space-y-4">
+            <div className="rounded-2xl border-2 border-[color:var(--urgent)]/40 bg-[color:var(--urgent)]/8 p-6 sm:p-7 space-y-4">
+              <h3 className="font-serif text-2xl font-semibold text-foreground">
+                Thank you for telling me — you don't have to go through this on your own.
+              </h3>
+              <p className="text-[15px] leading-relaxed text-foreground">
+                Some of what you wrote suggests you're having a really hard time. Before we
+                build anything, please look at these first — they're free, confidential, and there
+                right now:
+              </p>
+              <ul className="space-y-2 text-[15px] leading-relaxed text-foreground">
+                <li>
+                  <strong>Samaritans</strong> — call <a className="underline" href="tel:116123">116 123</a>{" "}
+                  (free, 24 hours a day, every day) or email{" "}
+                  <a className="underline" href="mailto:jo@samaritans.org">jo@samaritans.org</a>.
+                </li>
+                <li>
+                  <strong>NHS 111</strong> — call <a className="underline" href="tel:111">111</a> and
+                  choose the mental health option for urgent support.
+                </li>
+                <li>
+                  Ask your GP for an <strong>urgent same-day appointment</strong> and tell them how
+                  you're feeling.
+                </li>
+                <li>
+                  If you're in immediate danger, please call{" "}
+                  <a className="underline" href="tel:999">999</a> or go to your nearest A&amp;E.
+                </li>
+              </ul>
+              <p className="text-[15px] leading-relaxed text-foreground">
+                When you're ready, we can still put together a brief for your GP — reaching out for
+                that appointment is a good next step too.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                <button
+                  onClick={acknowledgeCrisisAndContinue}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+                >
+                  Continue and build my GP brief
+                </button>
+              </div>
+            </div>
+            <div ref={bottomRef} />
+          </div>
+        ) : showingNoPattern ? (
+          <div className="max-w-3xl mx-auto px-5 py-8 w-full space-y-4">
+            <div className="rounded-2xl border border-input-card-border bg-input-card p-6 sm:p-7 space-y-4">
+              <h3 className="font-serif text-2xl font-semibold text-foreground">
+                Let's make sure this brief actually fits you
+              </h3>
+              <p className="text-[15px] leading-relaxed text-foreground">
+                What you've described doesn't sound like a typical perimenopause pattern — but
+                preparing for your GP is still worth doing. Want a general appointment brief
+                instead?
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    const p = noPatternPrompt!;
+                    setNoPatternPrompt(null);
+                    void runBrief(p.text, { ageBand: p.ageBand, mode: "general" });
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+                >
+                  Yes — build a general GP brief
+                </button>
+                <button
+                  onClick={() => {
+                    setNoPatternPrompt(null);
+                    setInput("");
+                    setTimeout(() => textareaRef.current?.focus(), 50);
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 h-12 px-5 rounded-full border border-cta/40 text-cta text-sm font-medium hover:bg-cta/10 transition-all"
+                >
+                  Start over
+                </button>
+              </div>
+            </div>
+            <div ref={bottomRef} />
+          </div>
         ) : (
           <div className="max-w-3xl mx-auto px-5 py-8 space-y-6">
             {turns.map((t) =>
@@ -298,6 +379,7 @@ function Index() {
                 <div key={t.id}>
                   <BriefCard
                     brief={t.brief}
+                    ageBand={t.ageBand ?? latestAgeBand}
                     onUpdateBrief={t.brief === latestBrief ? () => setInputOpen(true) : undefined}
                   />
                 </div>
