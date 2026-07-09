@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { saveBriefAsPdf } from "@/lib/print-brief";
+import { toast } from "sonner";
 
 function Section({
   icon: Icon,
@@ -307,7 +308,15 @@ export function BriefCard({
           <CopyButton text={briefToPlainText(brief)} />
           <button
             type="button"
-            onClick={() => saveBriefAsPdf(brief)}
+            onClick={async () => {
+              try {
+                await saveBriefAsPdf(brief);
+                toast.success("PDF downloaded");
+              } catch (err) {
+                console.error("PDF export failed:", err);
+                toast.error("Couldn't save PDF. Please try again.");
+              }
+            }}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
           >
             <Download className="h-3.5 w-3.5" />
