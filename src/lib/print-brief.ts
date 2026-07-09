@@ -75,8 +75,6 @@ export function briefToPrintableHtml(brief: Brief): string {
   if (brief.timeline) parts.push(section("Timeline", `<p>${esc(brief.timeline)}</p>`));
   if (brief.impact_statement)
     parts.push(section("Impact on daily life", `<p>${esc(brief.impact_statement)}</p>`));
-  if (brief.already_tried?.length)
-    parts.push(section("Already tried", list(brief.already_tried)));
   if (brief.questions_to_ask?.length)
     parts.push(
       section(
