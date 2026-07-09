@@ -109,7 +109,7 @@ function briefToPlainText(b: Brief): string {
   return lines.join("\n").trim();
 }
 
-export function BriefCard({ brief }: { brief: Brief }) {
+export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrief?: () => void }) {
   if (brief.out_of_scope) {
     return (
       <div className="rounded-2xl border border-border bg-card p-6 sm:p-7">
