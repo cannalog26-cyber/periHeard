@@ -45,6 +45,8 @@ function Chip({
 
 export function QuickQuestions({ questions, onSubmit, onSkip, disabled, contextText }: Props) {
   const [answers, setAnswers] = useState<GapAnswers>({});
+  const [goalOther, setGoalOther] = useState("");
+  const [goalOtherActive, setGoalOtherActive] = useState(false);
   const mentionsHrt = /\b(hrt|hormone\s+replacement|oestrogen|estrogen|progesterone|testosterone\s+gel|patches?|gel|utrogestan|estradiol|tibolone)\b/i.test(
     (contextText ?? "") + " " + (answers.menstrual?.note ?? ""),
   );
@@ -220,19 +222,41 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled, contextT
                 {chip}
               </Chip>
             ))}
+            <Chip
+              active={goalOtherActive}
+              onClick={() => setGoalOtherActive((v) => !v)}
+            >
+              Other
+            </Chip>
           </div>
+          {goalOtherActive && (
+            <textarea
+              value={goalOther}
+              onChange={(e) => setGoalOther(e.target.value)}
+              rows={2}
+              placeholder="Tell us in your own words what you'd like from this appointment"
+              className="w-full mt-1 rounded-xl border border-input-card-border bg-background/40 px-3 py-2 text-[14px] leading-relaxed placeholder:text-foreground/60 focus:outline-none focus:border-secondary/60"
+            />
+          )}
         </div>
       )}
 
       <div className="flex flex-col sm:flex-row gap-2 pt-2">
         <button
-          onClick={() =>
-            onSubmit(
-              notedAge !== undefined && answers.ageYears === undefined
-                ? { ...answers, ageYears: notedAge }
-                : answers,
-            )
-          }
+          onClick={() => {
+            let finalAnswers: GapAnswers = answers;
+            if (notedAge !== undefined && answers.ageYears === undefined) {
+              finalAnswers = { ...finalAnswers, ageYears: notedAge };
+            }
+            const trimmedOther = goalOther.trim();
+            if (goalOtherActive && trimmedOther) {
+              finalAnswers = {
+                ...finalAnswers,
+                goal: [...(finalAnswers.goal ?? []), trimmedOther],
+              };
+            }
+            onSubmit(finalAnswers);
+          }}
           disabled={disabled || !canSubmit}
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 disabled:opacity-40 transition-all shadow-sm"
         >
