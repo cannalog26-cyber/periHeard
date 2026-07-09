@@ -5,9 +5,29 @@ type IncomingTurn =
   | { role: "user"; text: string }
   | { role: "assistant"; brief: unknown };
 
-function buildMessages(turns: IncomingTurn[]) {
+type AgeBand = "under_40" | "40_44" | "45_plus";
+type BriefMode = "perimenopause" | "general";
+
+function ageInstruction(ageBand?: AgeBand): string {
+  if (ageBand === "45_plus")
+    return "PATIENT AGE BAND: 45 or over. Apply the standard NG23 clinical pathway for women 45+ (symptom-based diagnosis, no routine FSH).";
+  if (ageBand === "40_44")
+    return `PATIENT AGE BAND: 40–44. Build the standard perimenopause brief. In "what_to_expect", include verbatim (in addition to the standard closing line) this sentence: "At your age, your GP may suggest a blood test (FSH) as part of the picture — NICE guidance supports this for women aged 40–45, so don't be surprised if it's offered or if it isn't."`;
+  if (ageBand === "under_40")
+    return `PATIENT AGE BAND: Under 40. REFRAME the brief. Do NOT use the phrase "consistent with perimenopause" or any equivalent perimenopause-framed language in patient-facing fields. Instead, "one_line_summary" should say the patient is experiencing these symptoms and, given her age, would like them properly assessed — noting that menopausal-type symptoms under 40 can have causes that need investigation, including premature ovarian insufficiency (POI). "questions_to_ask" must be reframed (e.g. "Could my symptoms be hormonal, and what tests would help establish that?", "Given I'm under 40, could this be premature ovarian insufficiency, and would FSH testing help?", "Would you consider a referral to a gynaecologist or menopause specialist?"). The clinical brief should reflect the NICE CKS POI pathway (FSH >25 IU/L on two samples 4–6 weeks apart, exclude pregnancy/thyroid/prolactin, specialist referral). Do not assert POI as a diagnosis — present it as a differential to investigate.`;
+  return "";
+}
+
+function modeInstruction(mode?: BriefMode): string {
+  if (mode === "general")
+    return `BRIEF MODE: GENERAL. The user's story does not fit a perimenopause pattern. Build a general GP appointment brief with NO menopause framing at all. Do not mention perimenopause, menopause, HRT, hormones, FSH, or NG23 anywhere in patient-facing or clinical fields unless the user explicitly raised them. Use the same JSON schema, but "one_line_summary" should simply frame the presenting concern; "questions_to_ask" should be generic good questions for the presenting symptoms; "clinical_impression" should list plausible differentials for what was actually described; "guideline_refs" may be empty.`;
+  return "";
+}
+
+function buildMessages(turns: IncomingTurn[], ageBand?: AgeBand, mode?: BriefMode) {
+  const extra = [ageInstruction(ageBand), modeInstruction(mode)].filter(Boolean).join("\n\n");
   const msgs: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: extra ? `${SYSTEM_PROMPT}\n\n${extra}` : SYSTEM_PROMPT },
   ];
   for (const t of turns) {
     if (t.role === "user") {
@@ -31,9 +51,13 @@ export const Route = createFileRoute("/api/chat")({
           );
         }
 
-        let body: { turns?: IncomingTurn[] };
+        let body: { turns?: IncomingTurn[]; ageBand?: AgeBand; mode?: BriefMode };
         try {
-          body = (await request.json()) as { turns?: IncomingTurn[] };
+          body = (await request.json()) as {
+            turns?: IncomingTurn[];
+            ageBand?: AgeBand;
+            mode?: BriefMode;
+          };
         } catch {
           return new Response(JSON.stringify({ error: "Invalid JSON body." }), {
             status: 400,
@@ -56,7 +80,7 @@ export const Route = createFileRoute("/api/chat")({
           },
           body: JSON.stringify({
             model: "google/gemini-2.5-flash",
-            messages: buildMessages(turns),
+            messages: buildMessages(turns, body.ageBand, body.mode),
             response_format: { type: "json_object" },
           }),
         });
