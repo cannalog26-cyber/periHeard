@@ -107,7 +107,7 @@ export function briefToPrintableHtml(brief: Brief): string {
   .cluster { font-weight: 600; }
   .dim { color: #6b6f6a; font-size: 9.5pt; }
   .urgent h2 { color: #6f1f17; border-color: #c94a3b; }
-  footer { margin-top: 24px; padding-top: 8px; border-top: 1px solid #d6d1c4; font-size: 9pt; color: #6b6f6a; font-style: italic; }
+  footer { margin-top: 18px; padding-top: 6px; border-top: 1px solid #d6d1c4; font-size: 8pt; color: #6b6f6a; font-style: italic; line-height: 1.35; }
   @media print { .noprint { display: none !important; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
   .actions { position: fixed; top: 12px; right: 12px; display: flex; gap: 8px; }
   .actions button { background: #1f3d33; color: #fff; border: 0; padding: 8px 14px; border-radius: 6px; font: inherit; font-size: 10pt; cursor: pointer; }
