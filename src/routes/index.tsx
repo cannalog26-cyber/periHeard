@@ -6,12 +6,14 @@ import { BriefCard } from "@/components/BriefCard";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useConversation } from "@/lib/use-conversation";
 import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/print-brief";
-import type { Brief, ChatTurn } from "@/lib/brief-types";
+import type { AgeBand, Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
 import { QuickQuestions } from "@/components/QuickQuestions";
 import {
   detectGaps,
+  detectCrisis,
   formatAnswersForBrief,
+  hasPerimenopausePattern,
   type GapAnswers,
   type GapQuestionId,
 } from "@/lib/gap-detection";
@@ -31,6 +33,12 @@ function Index() {
   const [inputOpen, setInputOpen] = useState(false);
   const [gapQuestions, setGapQuestions] = useState<GapQuestionId[] | null>(null);
   const [pendingText, setPendingText] = useState<string>("");
+  const [crisisAcknowledged, setCrisisAcknowledged] = useState(false);
+  const [crisisPending, setCrisisPending] = useState(false);
+  const [noPatternPrompt, setNoPatternPrompt] = useState<{
+    text: string;
+    ageBand: AgeBand;
+  } | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,7 +60,10 @@ function Index() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns.length, loading, gapQuestions]);
 
-  async function runBrief(userText: string) {
+  async function runBrief(
+    userText: string,
+    opts?: { ageBand?: AgeBand; mode?: "perimenopause" | "general" },
+  ) {
     const userTurn: ChatTurn = {
       role: "user",
       text: userText,
@@ -67,6 +78,8 @@ function Index() {
         turns: nextTurns.map((t) =>
           t.role === "user" ? { role: "user", text: t.text } : { role: "assistant", brief: t.brief },
         ),
+        ageBand: opts?.ageBand,
+        mode: opts?.mode,
       };
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -77,7 +90,14 @@ function Index() {
       if (!res.ok || !data.brief) {
         throw new Error(data.error ?? "Something went wrong.");
       }
-      append({ role: "assistant", brief: data.brief, id: newId(), createdAt: Date.now() });
+      append({
+        role: "assistant",
+        brief: data.brief,
+        id: newId(),
+        createdAt: Date.now(),
+        ageBand: opts?.ageBand,
+        mode: opts?.mode,
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -92,6 +112,13 @@ function Index() {
     if (!text || loading) return;
     // First submission: interpose quick questions to fill clinical gaps.
     if (turns.length === 0) {
+      // Crisis signposting always leads.
+      if (!crisisAcknowledged && detectCrisis(text)) {
+        setPendingText(text);
+        setInput("");
+        setCrisisPending(true);
+        return;
+      }
       const gaps = detectGaps(text);
       setPendingText(text);
       setInput("");
@@ -103,17 +130,32 @@ function Index() {
   }
 
   function handleGapSubmit(answers: GapAnswers) {
+    const ageBand = (answers.age ?? "45_plus") as AgeBand;
     const combined = pendingText + formatAnswersForBrief(answers);
+    const perimenopausePattern = hasPerimenopausePattern(pendingText, answers);
     setGapQuestions(null);
+    if (!perimenopausePattern) {
+      // Don't push a perimenopause-framed brief for an unrelated pattern.
+      setNoPatternPrompt({ text: combined, ageBand });
+      setPendingText("");
+      return;
+    }
     setPendingText("");
-    void runBrief(combined);
+    void runBrief(combined, { ageBand, mode: "perimenopause" });
   }
 
   function handleGapSkip() {
-    const text = pendingText;
-    setGapQuestions(null);
-    setPendingText("");
-    void runBrief(text);
+    // Age is required, so QuickQuestions blocks skip until age is set.
+    // We reuse handleGapSubmit's logic by treating skip as "submit with only age".
+    // In practice QuickQuestions won't call skip with no age; guard anyway.
+    handleGapSubmit({});
+  }
+
+  function acknowledgeCrisisAndContinue() {
+    setCrisisAcknowledged(true);
+    setCrisisPending(false);
+    const gaps = detectGaps(pendingText);
+    setGapQuestions(gaps);
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -123,11 +165,18 @@ function Index() {
     }
   }
 
-  const isEmpty = hydrated && turns.length === 0 && !gapQuestions;
+  const isEmpty =
+    hydrated && turns.length === 0 && !gapQuestions && !crisisPending && !noPatternPrompt;
   const showingGaps = hydrated && turns.length === 0 && !!gapQuestions;
+  const showingCrisis = hydrated && turns.length === 0 && crisisPending;
+  const showingNoPattern = hydrated && turns.length === 0 && !!noPatternPrompt;
   const latestBrief = [...turns].reverse().find(
     (t): t is ChatTurn & { brief: Brief } => t.role === "assistant" && !!t.brief,
   )?.brief;
+  const latestAssistant = [...turns].reverse().find(
+    (t): t is Extract<ChatTurn, { role: "assistant" }> => t.role === "assistant",
+  );
+  const latestAgeBand = latestAssistant?.ageBand;
 
   const chatInput = (expanded = false) => (
     <>
@@ -233,6 +282,87 @@ function Index() {
             />
             <div ref={bottomRef} />
           </div>
+        ) : showingCrisis ? (
+          <div className="max-w-3xl mx-auto px-5 py-8 w-full space-y-4">
+            <div className="rounded-2xl border-2 border-[color:var(--urgent)]/40 bg-[color:var(--urgent)]/8 p-6 sm:p-7 space-y-4">
+              <h3 className="font-serif text-2xl font-semibold text-foreground">
+                Thank you for telling me — you don't have to go through this on your own.
+              </h3>
+              <p className="text-[15px] leading-relaxed text-foreground">
+                Some of what you wrote suggests you're having a really hard time. Before we
+                build anything, please look at these first — they're free, confidential, and there
+                right now:
+              </p>
+              <ul className="space-y-2 text-[15px] leading-relaxed text-foreground">
+                <li>
+                  <strong>Samaritans</strong> — call <a className="underline" href="tel:116123">116 123</a>{" "}
+                  (free, 24 hours a day, every day) or email{" "}
+                  <a className="underline" href="mailto:jo@samaritans.org">jo@samaritans.org</a>.
+                </li>
+                <li>
+                  <strong>NHS 111</strong> — call <a className="underline" href="tel:111">111</a> and
+                  choose the mental health option for urgent support.
+                </li>
+                <li>
+                  Ask your GP for an <strong>urgent same-day appointment</strong> and tell them how
+                  you're feeling.
+                </li>
+                <li>
+                  If you're in immediate danger, please call{" "}
+                  <a className="underline" href="tel:999">999</a> or go to your nearest A&amp;E.
+                </li>
+              </ul>
+              <p className="text-[15px] leading-relaxed text-foreground">
+                When you're ready, we can still put together a brief for your GP — reaching out for
+                that appointment is a good next step too.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                <button
+                  onClick={acknowledgeCrisisAndContinue}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+                >
+                  Continue and build my GP brief
+                </button>
+              </div>
+            </div>
+            <div ref={bottomRef} />
+          </div>
+        ) : showingNoPattern ? (
+          <div className="max-w-3xl mx-auto px-5 py-8 w-full space-y-4">
+            <div className="rounded-2xl border border-input-card-border bg-input-card p-6 sm:p-7 space-y-4">
+              <h3 className="font-serif text-2xl font-semibold text-foreground">
+                Let's make sure this brief actually fits you
+              </h3>
+              <p className="text-[15px] leading-relaxed text-foreground">
+                What you've described doesn't sound like a typical perimenopause pattern — but
+                preparing for your GP is still worth doing. Want a general appointment brief
+                instead?
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    const p = noPatternPrompt!;
+                    setNoPatternPrompt(null);
+                    void runBrief(p.text, { ageBand: p.ageBand, mode: "general" });
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+                >
+                  Yes — build a general GP brief
+                </button>
+                <button
+                  onClick={() => {
+                    setNoPatternPrompt(null);
+                    setInput("");
+                    setTimeout(() => textareaRef.current?.focus(), 50);
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 h-12 px-5 rounded-full border border-cta/40 text-cta text-sm font-medium hover:bg-cta/10 transition-all"
+                >
+                  Start over
+                </button>
+              </div>
+            </div>
+            <div ref={bottomRef} />
+          </div>
         ) : (
           <div className="max-w-3xl mx-auto px-5 py-8 space-y-6">
             {turns.map((t) =>
@@ -249,6 +379,7 @@ function Index() {
                 <div key={t.id}>
                   <BriefCard
                     brief={t.brief}
+                    ageBand={t.ageBand ?? latestAgeBand}
                     onUpdateBrief={t.brief === latestBrief ? () => setInputOpen(true) : undefined}
                   />
                 </div>

@@ -1,4 +1,5 @@
 import type { Brief } from "@/lib/brief-types";
+import type { AgeBand } from "@/lib/brief-types";
 import {
   AlertTriangle,
   Clock,
@@ -109,7 +110,15 @@ function briefToPlainText(b: Brief): string {
   return lines.join("\n").trim();
 }
 
-export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrief?: () => void }) {
+export function BriefCard({
+  brief,
+  ageBand,
+  onUpdateBrief,
+}: {
+  brief: Brief;
+  ageBand?: AgeBand;
+  onUpdateBrief?: () => void;
+}) {
   if (brief.out_of_scope) {
     return (
       <div className="rounded-2xl border border-border bg-card p-6 sm:p-7">
@@ -350,6 +359,18 @@ export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrie
               The Menopause Charity
             </a>
           </li>
+          {ageBand === "under_40" && (
+            <li>
+              <a
+                href="https://www.daisynetwork.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                The Daisy Network — support for premature ovarian insufficiency (POI)
+              </a>
+            </li>
+          )}
         </ul>
       </Section>
 

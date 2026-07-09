@@ -3,13 +3,16 @@
 // hasn't already mentioned.
 
 export type GapQuestionId =
+  | "age"
   | "vasomotor"
   | "menstrual"
   | "sleep"
   | "genitourinary"
   | "goal";
 
-const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
+export type AgeBand = "under_40" | "40_44" | "45_plus";
+
+const PATTERNS: Record<"vasomotor" | "menstrual" | "sleep" | "genitourinary", RegExp> = {
   vasomotor: /\b(hot\s*(flush|flash)es?|night\s*sweats?|sweating|sweats?\b|flushing)\b/i,
   menstrual:
     /\b(period|periods|menstrua\w*|cycle|cycles|bleed\w*|spotting|lmp|last\s+period|menopaus\w*|amenorrhoea|amenorrhea)\b/i,
@@ -22,6 +25,8 @@ const PATTERNS: Record<Exclude<GapQuestionId, "goal">, RegExp> = {
 export function detectGaps(text: string): GapQuestionId[] {
   const t = text ?? "";
   const gaps: GapQuestionId[] = [];
+  // Age is always required and comes first.
+  gaps.push("age");
   // Vasomotor - always ask if not clearly mentioned (diagnostically important)
   if (!PATTERNS.vasomotor.test(t)) gaps.push("vasomotor");
   if (!PATTERNS.menstrual.test(t)) gaps.push("menstrual");
@@ -33,6 +38,7 @@ export function detectGaps(text: string): GapQuestionId[] {
 }
 
 export type GapAnswers = {
+  age?: AgeBand;
   vasomotor?: "yes" | "no" | "not_sure";
   menstrual?: { chips: string[]; note?: string };
   sleep?: "fine" | "disturbed" | "very_poor";
@@ -42,6 +48,14 @@ export type GapAnswers = {
 
 export function formatAnswersForBrief(answers: GapAnswers): string {
   const lines: string[] = [];
+  if (answers.age) {
+    const map = {
+      under_40: "Under 40",
+      "40_44": "40–44",
+      "45_plus": "45 or over",
+    } as const;
+    lines.push(`Age band: ${map[answers.age]}.`);
+  }
   if (answers.vasomotor) {
     const map = {
       yes: "Yes, experiencing hot flushes and/or night sweats.",
@@ -91,3 +105,28 @@ export const GOAL_CHIPS = [
   "To be taken seriously",
   "Not sure yet",
 ];
+
+// --- Symptom-pattern check (perimenopause-typical) ---
+// True when the free text OR the quick-question answers suggest a
+// perimenopause-pattern picture (any vasomotor, menstrual, genitourinary,
+// sleep, or other menopause-typical descriptor). Used to avoid framing
+// unrelated symptoms as perimenopause.
+const PERI_TEXT_PATTERN =
+  /\b(hot\s*(flush|flash)es?|night\s*sweats?|sweating|flushing|period|periods|menstrua\w*|cycle|cycles|bleed\w*|spotting|menopaus\w*|amenorrhoea|amenorrhea|vagina\w*|dryness|painful\s+sex|libido|sex\s*drive|urin\w*|bladder|uti|utis|incontinen\w*|brain\s*fog|word.?finding|memory|joint\s*pain|palpitations|hrt|oestrogen|estrogen|hormone|perimenopaus\w*)\b/i;
+
+export function hasPerimenopausePattern(text: string, answers: GapAnswers): boolean {
+  if (PERI_TEXT_PATTERN.test(text ?? "")) return true;
+  if (answers.vasomotor === "yes") return true;
+  if (answers.genitourinary === "yes") return true;
+  if (answers.menstrual?.chips && answers.menstrual.chips.length > 0) return true;
+  if (answers.menstrual?.note && PERI_TEXT_PATTERN.test(answers.menstrual.note)) return true;
+  return false;
+}
+
+// --- Crisis / self-harm detection ---
+const CRISIS_PATTERN =
+  /\b(suicid\w*|kill\s+(myself|me)|end\s+(it\s+all|my\s+life|it)|self.?harm|hurt(ing)?\s+myself|can'?t\s+go\s+on|no\s+reason\s+to\s+live|want\s+to\s+die|don'?t\s+want\s+to\s+be\s+here|take\s+my\s+(own\s+)?life|hopeless(ness)?)\b/i;
+
+export function detectCrisis(text: string): boolean {
+  return CRISIS_PATTERN.test(text ?? "");
+}
