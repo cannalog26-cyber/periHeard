@@ -193,19 +193,6 @@ export function BriefCard({
         </Section>
       )}
 
-      {brief.already_tried?.length > 0 && (
-        <Section icon={ListChecks} title="Already tried">
-          <ul className="space-y-2">
-            {brief.already_tried.map((x, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="text-secondary" aria-hidden="true">•</span>
-                <span>{x}</span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-
       {brief.questions_to_ask?.length > 0 && (
         <Section icon={Stethoscope} title="Questions to ask your GP">
           <ol className="space-y-3">
