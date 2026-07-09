@@ -165,9 +165,6 @@ function Index() {
               </button>
         </div>
       </div>
-      <p className="text-[11px] text-foreground/75 text-center mt-2">
-        This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.
-      </p>
     </>
   );
 
