@@ -1,4 +1,27 @@
 import type { Brief, ChatTurn } from "./brief-types";
+import logoAsset from "@/assets/periHeard-logo.png.asset.json";
+
+let logoDataUrlPromise: Promise<string | null> | null = null;
+async function getLogoDataUrl(): Promise<string | null> {
+  if (!logoDataUrlPromise) {
+    logoDataUrlPromise = (async () => {
+      try {
+        const res = await fetch(logoAsset.url);
+        if (!res.ok) return null;
+        const blob = await res.blob();
+        return await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(blob);
+        });
+      } catch {
+        return null;
+      }
+    })();
+  }
+  return logoDataUrlPromise;
+}
 
 function esc(s: string): string {
   return s
