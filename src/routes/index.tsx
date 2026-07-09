@@ -319,6 +319,7 @@ function Index() {
               onSubmit={handleGapSubmit}
               onSkip={handleGapSkip}
               disabled={loading}
+              contextText={pendingText}
             />
             <div ref={bottomRef} />
           </div>
