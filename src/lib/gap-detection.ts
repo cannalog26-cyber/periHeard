@@ -19,7 +19,7 @@ const PATTERNS: Record<"vasomotor" | "menstrual" | "sleep" | "genitourinary", Re
   sleep:
     /\b(sleep\w*|insomnia|awake|waking|wake\s+up|can'?t\s+sleep|restless\s+nights?|tired|exhaust\w*|fatigue)\b/i,
   genitourinary:
-    /\b(vagina\w*|dryness|painful\s+sex|sex\s+is|libido|sex\s*drive|urin\w*|bladder|uti|utis|incontinen\w*|leak\w*|prolapse|pelvic)\b/i,
+    /\b(vagina\w*|dryness|painful\s+sex|pain\w*\s+(?:during|with|having|in)\s+sex|discomfort\w*\s+(?:during|with|having|in)\s+sex|sex\s+is\s+(?:painful|uncomfortable|sore)|sex\s+hurts?|hurts?\s+(?:during|when)\s+sex|dyspareunia|libido|sex\s*drive|urin\w*|bladder|uti|utis|incontinen\w*|leak\w*|prolapse|pelvic)\b/i,
 };
 
 // Try to pull an explicit age out of the user's free text. We only match
