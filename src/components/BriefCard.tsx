@@ -293,8 +293,7 @@ export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrie
         </Section>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-        <p className="text-sm text-muted-foreground italic leading-relaxed">{brief.disclaimer}</p>
+      <div className="flex flex-wrap items-center justify-end gap-4 pt-2">
         <div className="flex items-center gap-1">
           <CopyButton text={briefToPlainText(brief)} />
           <button
