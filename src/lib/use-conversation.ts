@@ -64,9 +64,7 @@ export function useConversation() {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(async () => {
       const title = deriveTitle(turns);
-      const payloadTurns = turns as unknown as Parameters<
-        typeof supabase.from
-      > extends never ? never : any;
+      const payloadTurns = turns as unknown as never;
       if (conversationId) {
         await supabase
           .from("conversations")
