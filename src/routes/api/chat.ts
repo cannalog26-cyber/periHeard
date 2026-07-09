@@ -5,7 +5,7 @@ type IncomingTurn =
   | { role: "user"; text: string }
   | { role: "assistant"; brief: unknown };
 
-type AgeBand = "under_40" | "40_44" | "45_plus";
+type AgeBand = "under_35" | "35_39" | "40_44" | "45_plus";
 type BriefMode = "perimenopause" | "general";
 
 function ageInstruction(ageBand?: AgeBand): string {
