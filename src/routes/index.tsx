@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { ArrowUp, Download, Printer, RotateCcw, UserCircle2 } from "lucide-react";
@@ -9,6 +9,7 @@ import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/
 import type { AgeBand, Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
 import { QuickQuestions } from "@/components/QuickQuestions";
+import { useSession } from "@/lib/use-session";
 import {
   detectGaps,
   detectCrisis,
@@ -29,6 +30,8 @@ function newId() {
 
 function Index() {
   const { turns, append, reset, hydrated } = useConversation();
+  const { user } = useSession();
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputOpen, setInputOpen] = useState(false);
@@ -249,6 +252,20 @@ function Index() {
             <>
               <button
                 onClick={() => {
+                  if (!user) {
+                    toast("Sign in to save your conversation", {
+                      description:
+                        "Create a free account so you can save this conversation and come back to it later.",
+                      action: {
+                        label: "Sign in / Sign up",
+                        onClick: () => {
+                          void navigate({ to: "/auth" });
+                        },
+                      },
+                      duration: 8000,
+                    });
+                    return;
+                  }
                   void saveConversationAsPdf(turns);
                 }}
                 title="Save conversation"
