@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 
 const navItems = [
   { label: "Symptom Checker", to: "/" },
-  { label: "Talk to Peri", to: "/" },
+  { label: "Talk to Peri", to: "/", scrollTo: "brief-builder" },
   { label: "Community Forum", to: "/community" },
   { label: "Resources", to: "/resources" },
 ];
@@ -24,7 +24,14 @@ export function Header({ actions }: { actions?: ReactNode }) {
           {navItems.map((item) => (
             <Link
               key={item.label}
-              to={item.to as "/" | "/community" | "/resources"}
+              to={item.to}
+              onClick={(e) => {
+                if (item.scrollTo && window.location.pathname === "/") {
+                  e.preventDefault();
+                  const el = document.getElementById(item.scrollTo);
+                  el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }}
               className="text-sm font-medium text-foreground hover:text-secondary transition-colors whitespace-nowrap"
             >
               {item.label}
@@ -56,8 +63,15 @@ export function Header({ actions }: { actions?: ReactNode }) {
                 {navItems.map((item) => (
                   <Link
                     key={item.label}
-                    to={item.to as "/" | "/community" | "/resources"}
-                    onClick={() => setOpen(false)}
+                    to={item.to}
+                    onClick={(e) => {
+                      if (item.scrollTo && window.location.pathname === "/") {
+                        e.preventDefault();
+                        const el = document.getElementById(item.scrollTo);
+                        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }
+                      setOpen(false);
+                    }}
                     className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
                   >
                     {item.label}
