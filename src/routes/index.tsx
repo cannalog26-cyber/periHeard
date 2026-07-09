@@ -275,13 +275,6 @@ function Index() {
               chatInput()
             ) : (
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <button
-                  onClick={() => setInputOpen(true)}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
-                >
-                  Update Brief
-                  <ArrowUp className="h-4 w-4" />
-                </button>
                 {latestBrief && (
                   <>
                     <button
