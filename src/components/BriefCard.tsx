@@ -12,13 +12,10 @@ import {
   Briefcase,
   Copy,
   Check,
-  Download,
   BookOpen,
   ArrowUp,
 } from "lucide-react";
 import { useState } from "react";
-import { saveBriefAsPdf } from "@/lib/print-brief";
-import { toast } from "sonner";
 
 function Section({
   icon: Icon,
@@ -73,42 +70,6 @@ function CopyButton({ text }: { text: string }) {
       {copied ? "Copied" : "Copy"}
     </button>
   );
-}
-
-function briefToPlainText(b: Brief): string {
-  const lines: string[] = [];
-  if (b.urgent_banner && !b.red_flags?.length) lines.push(`URGENT: ${b.urgent_banner}`, "");
-  if (b.one_line_summary) lines.push(`Opening line: ${b.one_line_summary}`, "");
-  if (b.symptom_summary?.length) {
-    lines.push("Symptoms:");
-    for (const s of b.symptom_summary) {
-      lines.push(`- ${s.cluster}: ${s.detail} (${s.duration_pattern})`);
-    }
-    lines.push("");
-  }
-  if (b.timeline) lines.push(`Timeline: ${b.timeline}`, "");
-  if (b.impact_statement) lines.push(`Impact: ${b.impact_statement}`, "");
-  if (b.already_tried?.length) {
-    lines.push("Already tried:");
-    b.already_tried.forEach((x) => lines.push(`- ${x}`));
-    lines.push("");
-  }
-  if (b.questions_to_ask?.length) {
-    lines.push("Questions to ask:");
-    b.questions_to_ask.forEach((x) => lines.push(`- ${x}`));
-    lines.push("");
-  }
-  if (b.if_dismissed?.length) {
-    lines.push("If dismissed, try:");
-    b.if_dismissed.forEach((x) => lines.push(`- ${x}`));
-    lines.push("");
-  }
-  if (b.red_flags?.length) {
-    lines.push("Red flags:");
-    b.red_flags.forEach((x) => lines.push(`- ${x}`));
-    lines.push("");
-  }
-  return lines.join("\n").trim();
 }
 
 export function BriefCard({
@@ -302,28 +263,6 @@ export function BriefCard({
           </ul>
         </Section>
       )}
-
-      <div className="flex flex-wrap items-center justify-end gap-4 pt-2">
-        <div className="flex items-center gap-1">
-          <CopyButton text={briefToPlainText(brief)} />
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                await saveBriefAsPdf(brief);
-                toast.success("PDF downloaded");
-              } catch (err) {
-                console.error("PDF export failed:", err);
-                toast.error("Couldn't save PDF. Please try again.");
-              }
-            }}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Save as PDF
-          </button>
-        </div>
-      </div>
 
       {onUpdateBrief && (
         <button
