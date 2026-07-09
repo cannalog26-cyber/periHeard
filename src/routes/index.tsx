@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { ArrowUp, Download, Printer, RotateCcw, UserCircle2 } from "lucide-react";
@@ -9,6 +9,7 @@ import { saveConversationAsPdf, saveBriefAsPdf, openBriefForPrint } from "@/lib/
 import type { AgeBand, Brief, ChatTurn } from "@/lib/brief-types";
 import { Header } from "@/components/Header";
 import { QuickQuestions } from "@/components/QuickQuestions";
+import { useSession } from "@/lib/use-session";
 import {
   detectGaps,
   detectCrisis,
