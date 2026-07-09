@@ -77,7 +77,7 @@ function CopyButton({ text }: { text: string }) {
 
 function briefToPlainText(b: Brief): string {
   const lines: string[] = [];
-  if (b.urgent_banner) lines.push(`URGENT: ${b.urgent_banner}`, "");
+  if (b.urgent_banner && !b.red_flags?.length) lines.push(`URGENT: ${b.urgent_banner}`, "");
   if (b.one_line_summary) lines.push(`Opening line: ${b.one_line_summary}`, "");
   if (b.symptom_summary?.length) {
     lines.push("Symptoms:");
