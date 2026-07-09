@@ -148,17 +148,25 @@ export async function saveBriefAsPdf(brief: Brief) {
   // Extract just the .page element for rendering
   const page = container.querySelector(".page") as HTMLElement | null;
   const styleEl = container.querySelector("style");
+  if (!page) return;
+  // html2canvas often ignores <style> tags inside the captured element,
+  // so inject the stylesheet into <head> for the duration of the render.
+  const injectedStyle = document.createElement("style");
+  injectedStyle.setAttribute("data-brief-pdf", "1");
+  injectedStyle.textContent = styleEl?.textContent ?? "";
+  document.head.appendChild(injectedStyle);
   const wrapper = document.createElement("div");
-  wrapper.style.position = "fixed";
-  wrapper.style.left = "-10000px";
+  wrapper.style.position = "absolute";
+  wrapper.style.left = "0";
   wrapper.style.top = "0";
   wrapper.style.width = "800px";
   wrapper.style.background = "#fff";
-  if (styleEl) wrapper.appendChild(styleEl.cloneNode(true));
-  if (page) wrapper.appendChild(page.cloneNode(true));
+  wrapper.style.zIndex = "-1";
+  wrapper.style.opacity = "0";
+  wrapper.style.pointerEvents = "none";
+  wrapper.appendChild(page.cloneNode(true));
   document.body.appendChild(wrapper);
 
-  const dateStr = new Date().toISOString().slice(0, 10);
   try {
     const mod = await import("html2pdf.js");
     const html2pdf = (mod as any).default ?? (mod as any);
@@ -175,6 +183,7 @@ export async function saveBriefAsPdf(brief: Brief) {
       .save();
   } finally {
     document.body.removeChild(wrapper);
+    injectedStyle.remove();
   }
 }
 
