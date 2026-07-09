@@ -139,22 +139,21 @@ function Index() {
       answers.ageYears === undefined && inferred !== undefined
         ? { ...answers, ageYears: inferred }
         : answers;
-    // Derive age band from numeric age. Under 30 is excluded from the
-    // perimenopause pathway entirely and always gets a general brief.
-    let ageBand: AgeBand | undefined;
-    let forceGeneral = false;
-    if (typeof years === "number") {
-      if (years < 30) {
-        forceGeneral = true;
-        ageBand = undefined;
-      } else if (years < 45) {
-        ageBand = "40_44";
+    // Derive age band. Prefer explicit selection; otherwise infer from a
+    // free-text age. Under 35 is excluded from perimenopause-asserted
+    // framing (see chat.ts age instructions).
+    let ageBand: AgeBand | undefined = mergedAnswers.age;
+    if (!ageBand) {
+      if (typeof years === "number") {
+        if (years < 35) ageBand = "under_35";
+        else if (years < 40) ageBand = "35_39";
+        else if (years < 45) ageBand = "40_44";
+        else ageBand = "45_plus";
       } else {
         ageBand = "45_plus";
       }
-    } else {
-      ageBand = "45_plus";
     }
+    const forceGeneral = false;
     const combined = pendingText + formatAnswersForBrief(mergedAnswers);
     const perimenopausePattern = hasPerimenopausePattern(pendingText, mergedAnswers);
     setGapQuestions(null);
