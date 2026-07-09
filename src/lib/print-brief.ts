@@ -50,7 +50,7 @@ export function briefToPrintableHtml(brief: Brief): string {
 
   const parts: string[] = [];
 
-  if (brief.urgent_banner) {
+  if (brief.urgent_banner && !brief.red_flags?.length) {
     parts.push(
       `<div class="banner"><strong>Please read first:</strong> ${esc(brief.urgent_banner)}</div>`,
     );
@@ -264,7 +264,7 @@ export async function saveBriefAsPdf(brief: Brief) {
     doc.line(marginX, y, pageW - marginX, y);
     y += 4 * scale;
 
-    if (brief.urgent_banner) {
+    if (brief.urgent_banner && !brief.red_flags?.length) {
       const size = 9.5 * scale;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(size);

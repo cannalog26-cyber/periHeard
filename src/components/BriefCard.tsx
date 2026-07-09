@@ -152,7 +152,7 @@ export function BriefCard({
 
   return (
     <div className="space-y-6">
-      {brief.urgent_banner && (
+      {brief.urgent_banner && !brief.red_flags?.length && (
         <div className="rounded-2xl border-2 border-[color:var(--urgent)]/50 bg-[color:var(--urgent)]/10 p-6 sm:p-7">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-[color:var(--urgent)] mt-0.5 shrink-0" aria-hidden="true" />
