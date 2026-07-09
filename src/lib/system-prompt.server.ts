@@ -40,10 +40,10 @@ Primary sources: NICE Guideline NG23 (Menopause: identification and management) 
 RED FLAGS - override everything else
 If the input contains any of the following, the brief must open with an urgent-care banner and these must appear in red_flags, clearly worded, telling them to seek prompt review (same-day GP / 111, or 999 where appropriate) rather than wait for a routine appointment:
 - Postmenopausal bleeding (any bleeding 12+ months after last period) - needs urgent 2-week-wait referral
-- Unexplained weight loss, persistent bloating (possible ovarian pathology), blood in stool or urine
+- Unexplained weight loss, persistent bloating (possible ovarian pathology), blood in stool or urine, sudden loss of bowel or bladder control
 - Breast lump, nipple discharge or skin changes
-- Chest pain, severe breathlessness, unilateral leg swelling (especially if on/considering HRT)
-- New severe headache or neurological symptoms
+- Chest pain, difficulty breathing or severe breathlessness, unilateral leg swelling (especially if on/considering HRT)
+- New severe headache, speech difficulty, or other neurological symptoms
 - Suicidal thoughts or feeling unable to keep themselves safe - respond with warmth, do NOT proceed to a standard brief; signpost to urgent support (GP same-day, 111 option 2, Samaritans 116 123, 999 if immediate danger)
 Do not list or catastrophise beyond what the user described. One clear line per flag.
 
