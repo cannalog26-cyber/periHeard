@@ -13,6 +13,7 @@ import {
   Check,
   Download,
   BookOpen,
+  ArrowUp,
 } from "lucide-react";
 import { useState } from "react";
 import { openBriefForPrint } from "@/lib/print-brief";
@@ -108,7 +109,7 @@ function briefToPlainText(b: Brief): string {
   return lines.join("\n").trim();
 }
 
-export function BriefCard({ brief }: { brief: Brief }) {
+export function BriefCard({ brief, onUpdateBrief }: { brief: Brief; onUpdateBrief?: () => void }) {
   if (brief.out_of_scope) {
     return (
       <div className="rounded-2xl border border-border bg-card p-6 sm:p-7">
@@ -356,6 +357,17 @@ export function BriefCard({ brief }: { brief: Brief }) {
           </li>
         </ul>
       </Section>
+
+      {onUpdateBrief && (
+        <button
+          type="button"
+          onClick={onUpdateBrief}
+          className="w-full inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-cta text-cta-foreground text-sm font-bold hover:bg-cta/90 transition-all shadow-sm"
+        >
+          Update Brief
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
