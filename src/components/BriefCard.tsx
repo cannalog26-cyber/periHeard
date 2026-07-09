@@ -300,28 +300,6 @@ export function BriefCard({
         </Section>
       )}
 
-      <div className="flex flex-wrap items-center justify-end gap-4 pt-2">
-        <div className="flex items-center gap-1">
-          <CopyButton text={briefToPlainText(brief)} />
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                await saveBriefAsPdf(brief);
-                toast.success("PDF downloaded");
-              } catch (err) {
-                console.error("PDF export failed:", err);
-                toast.error("Couldn't save PDF. Please try again.");
-              }
-            }}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Save as PDF
-          </button>
-        </div>
-      </div>
-
       {onUpdateBrief && (
         <button
           type="button"
