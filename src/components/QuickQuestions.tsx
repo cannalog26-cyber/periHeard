@@ -108,10 +108,6 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
             placeholder="e.g. 46"
             className="w-32 rounded-xl border border-input-card-border bg-background/40 px-3 py-2 text-[15px] leading-relaxed placeholder:text-foreground/60 focus:outline-none focus:border-secondary/60"
           />
-          <p className="text-xs text-muted-foreground">
-            Your age helps shape the brief. Perimenopause symptoms can begin from around 35;
-            under 30 we'll build a general appointment brief instead.
-          </p>
         </div>
       )}
 
