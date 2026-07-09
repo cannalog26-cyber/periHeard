@@ -129,7 +129,7 @@ export function briefToPrintableHtml(brief: Brief): string {
   ${parts.join("\n")}
   <footer>
     <div>${esc(brief.disclaimer || "This tool is intended to support symptom awareness and consultation preparation. It does not provide a diagnosis or replace medical advice.")}</div>
-    <div style="margin-top:6px;">Patient-completed summary, organised with reference to NICE guideline NG23. Not clinically verified. Generated ${esc(dateStr)}.</div>
+    <div style="margin-top:6px;">Generated ${esc(dateStr)}.</div>
   </footer>
 </div>
 <script>window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 400); });</script>
