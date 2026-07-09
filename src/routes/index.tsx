@@ -252,6 +252,20 @@ function Index() {
             <>
               <button
                 onClick={() => {
+                  if (!user) {
+                    toast("Sign in to save your conversation", {
+                      description:
+                        "Create a free account so you can save this conversation and come back to it later.",
+                      action: {
+                        label: "Sign in / Sign up",
+                        onClick: () => {
+                          void navigate({ to: "/auth" });
+                        },
+                      },
+                      duration: 8000,
+                    });
+                    return;
+                  }
                   void saveConversationAsPdf(turns);
                 }}
                 title="Save conversation"
