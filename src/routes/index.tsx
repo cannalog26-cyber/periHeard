@@ -246,9 +246,9 @@ function Index() {
                   </div>
                 </div>
               ) : (
-                <div key={t.id}>
-                  <BriefCard brief={t.brief} />
-                </div>
+              <div key={t.id}>
+                <BriefCard brief={t.brief} onUpdateBrief={() => setInputOpen(true)} />
+              </div>
               ),
             )}
 
