@@ -84,8 +84,8 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
       <div className="space-y-1">
         <h3 className="font-serif text-2xl font-semibold text-foreground">A few quick questions</h3>
         <p className="text-sm text-muted-foreground">
-          These help fill in the picture so your brief is as useful as possible. Age is required;
-          the rest are optional.
+          These help fill in the picture so your brief is as useful as possible.
+          {requiresAge ? " Age is required; the rest are optional." : " All optional."}
         </p>
       </div>
 
