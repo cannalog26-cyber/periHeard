@@ -5,6 +5,7 @@ import {
   type GapQuestionId,
   MENSTRUAL_CHIPS,
   GOAL_CHIPS,
+  extractAge,
 } from "@/lib/gap-detection";
 import type { AgeBand } from "@/lib/brief-types";
 import { cn } from "@/lib/utils";
@@ -69,7 +70,10 @@ export function QuickQuestions({ questions, onSubmit, onSkip, disabled }: Props)
     });
   };
 
-  const requiresAge = questions.includes("age");
+  // If the user typed their age into the menstrual note (the only free-text
+  // field in this panel), respect that and drop the age requirement.
+  const notedAge = extractAge(answers.menstrual?.note ?? "");
+  const requiresAge = questions.includes("age") && notedAge === undefined;
   const canSubmit = !requiresAge || !!answers.age;
 
   const AGE_BANDS: { value: AgeBand; label: string }[] = [
